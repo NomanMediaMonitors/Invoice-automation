@@ -112,6 +112,11 @@ public class VendorDetailsViewModel
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 
+    // Bank details
+    public string? BankName { get; set; }
+    public string? BankAccountNumber { get; set; }
+    public string? BankIban { get; set; }
+
     // Statistics
     public int TotalInvoices { get; set; }
     public int PendingInvoices { get; set; }

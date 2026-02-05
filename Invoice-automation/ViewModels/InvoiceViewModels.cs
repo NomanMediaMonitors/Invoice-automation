@@ -47,9 +47,14 @@ public class InvoiceUploadViewModel
 
     [Required(ErrorMessage = "Please select an invoice file")]
     [Display(Name = "Invoice File")]
-    public IFormFile InvoiceFile { get; set; } = null!;
+    public IFormFile File { get; set; } = null!;
+
+    [Display(Name = "Vendor")]
+    public Guid? VendorId { get; set; }
 
     public List<SelectListItem> Companies { get; set; } = new();
+
+    public List<SelectListItem> Vendors { get; set; } = new();
 }
 
 /// <summary>
@@ -221,7 +226,7 @@ public class InvoiceReviewViewModel
     public DateTime? DueDate { get; set; }
     public string VendorName { get; set; } = string.Empty;
     public string? VendorNtn { get; set; }
-    public decimal Subtotal { get; set; }
+    public decimal SubTotal { get; set; }
     public decimal TaxAmount { get; set; }
     public decimal TotalAmount { get; set; }
     public string Currency { get; set; } = "PKR";
@@ -233,6 +238,12 @@ public class InvoiceReviewViewModel
     /// URL to the invoice file for preview
     /// </summary>
     public string InvoiceFileUrl { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Path to the invoice image (alias for InvoiceFileUrl for view compatibility)
+    /// </summary>
+    public string ImagePath => InvoiceFileUrl;
+
     public bool IsPdf { get; set; }
 
     /// <summary>
@@ -265,7 +276,17 @@ public class InvoiceReviewViewModel
     /// </summary>
     public string UploadedByName { get; set; } = string.Empty;
 
+    /// <summary>
+    /// Alias for UploadedByName for view compatibility
+    /// </summary>
+    public string CreatedByName => UploadedByName;
+
     public DateTime UploadedAt { get; set; }
+
+    /// <summary>
+    /// Alias for UploadedAt for view compatibility
+    /// </summary>
+    public DateTime CreatedAt => UploadedAt;
 }
 
 /// <summary>

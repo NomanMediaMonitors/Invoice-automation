@@ -56,4 +56,9 @@ public class ApprovalHistoryDto
     public string? Comments { get; set; }
     public DateTime? DecidedAt { get; set; }
     public DateTime CreatedAt { get; set; }
+
+    /// <summary>
+    /// Alias for DecidedAt for view compatibility
+    /// </summary>
+    public DateTime? ActionDate => DecidedAt;
 }

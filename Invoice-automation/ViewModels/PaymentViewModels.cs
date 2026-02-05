@@ -118,21 +118,52 @@ public class PaymentDetailsViewModel
     public string VendorName { get; set; } = string.Empty;
     public string PaymentAccountId { get; set; } = string.Empty;
     public string PaymentAccountName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Alias for PaymentAccountName for view compatibility
+    /// </summary>
+    public string BankAccountName => PaymentAccountName;
+
     public decimal Amount { get; set; }
     public string Currency { get; set; } = "PKR";
     public string? PaymentMethod { get; set; }
     public string? ReferenceNumber { get; set; }
+
+    /// <summary>
+    /// Alias for ReferenceNumber for view compatibility
+    /// </summary>
+    public string? TransactionReference => ReferenceNumber;
+
     public PaymentStatus Status { get; set; }
     public DateTime? ScheduledDate { get; set; }
     public DateTime? ExecutedAt { get; set; }
+
+    /// <summary>
+    /// Alias for ExecutedAt for view compatibility
+    /// </summary>
+    public DateTime? PaymentDate => ExecutedAt;
+
     public string? ExecutedByName { get; set; }
     public string? ExternalRef { get; set; }
     public string? JournalEntryRef { get; set; }
+
+    /// <summary>
+    /// Alias for JournalEntryRef for view compatibility
+    /// </summary>
+    public string? JournalEntryId => JournalEntryRef;
+
     public string? FailureReason { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
+    public string? CreatedByName { get; set; }
+    public string? Notes { get; set; }
 
     /// <summary>
     /// Journal entry details
     /// </summary>
     public JournalEntryDto? JournalEntry { get; set; }
+
+    /// <summary>
+    /// Journal entries list (from JournalEntry.Lines)
+    /// </summary>
+    public List<JournalLineDto>? JournalEntries => JournalEntry?.Lines;
 }
