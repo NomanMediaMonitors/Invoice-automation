@@ -1,0 +1,251 @@
+@model InvoiceAutomation.Web.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-speedometer2 me-2"></i>Dashboard</h2>
+            <p class="text-muted">Welcome back! Here's an overview of your invoice management.</p>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-start border-primary border-4 h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="text-muted small text-uppercase fw-bold">Total Invoices</div>
+                            <div class="h3 mb-0">@Model.TotalInvoices</div>
+                        </div>
+                        <div class="text-primary">
+                            <i class="bi bi-receipt" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-start border-warning border-4 h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="text-muted small text-uppercase fw-bold">Pending Approval</div>
+                            <div class="h3 mb-0">@Model.PendingApproval</div>
+                        </div>
+                        <div class="text-warning">
+                            <i class="bi bi-hourglass-split" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-start border-success border-4 h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="text-muted small text-uppercase fw-bold">Approved</div>
+                            <div class="h3 mb-0">@Model.ApprovedInvoices</div>
+                        </div>
+                        <div class="text-success">
+                            <i class="bi bi-check-circle" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-start border-info border-4 h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="text-muted small text-uppercase fw-bold">Pending Payment</div>
+                            <div class="h3 mb-0">@Model.PendingPayment</div>
+                        </div>
+                        <div class="text-info">
+                            <i class="bi bi-credit-card" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Amount Stats -->
+    <div class="row mb-4">
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="small text-uppercase fw-bold opacity-75">Total Amount</div>
+                            <div class="h3 mb-0">PKR @Model.TotalAmount.ToString("N0")</div>
+                        </div>
+                        <i class="bi bi-cash-stack" style="font-size: 2rem; opacity: 0.5;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="small text-uppercase fw-bold opacity-75">Paid Amount</div>
+                            <div class="h3 mb-0">PKR @Model.PaidAmount.ToString("N0")</div>
+                        </div>
+                        <i class="bi bi-check2-all" style="font-size: 2rem; opacity: 0.5;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card bg-danger text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="small text-uppercase fw-bold opacity-75">Outstanding</div>
+                            <div class="h3 mb-0">PKR @Model.OutstandingAmount.ToString("N0")</div>
+                        </div>
+                        <i class="bi bi-exclamation-triangle" style="font-size: 2rem; opacity: 0.5;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Recent Invoices -->
+        <div class="col-lg-8 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Recent Invoices</h5>
+                    <a asp-controller="Invoice" asp-action="Index" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentInvoices != null && Model.RecentInvoices.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Invoice #</th>
+                                        <th>Vendor</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var invoice in Model.RecentInvoices)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <a asp-controller="Invoice" asp-action="Edit" asp-route-id="@invoice.Id">
+                                                    @invoice.InvoiceNumber
+                                                </a>
+                                            </td>
+                                            <td>@invoice.VendorName</td>
+                                            <td>PKR @invoice.TotalAmount.ToString("N0")</td>
+                                            <td>
+                                                @{
+                                                    var statusClass = invoice.Status switch
+                                                    {
+                                                        InvoiceStatus.Draft => "secondary",
+                                                        InvoiceStatus.PendingManagerReview => "warning",
+                                                        InvoiceStatus.PendingAdminApproval => "info",
+                                                        InvoiceStatus.Approved => "success",
+                                                        InvoiceStatus.PaymentPending => "primary",
+                                                        InvoiceStatus.Completed => "success",
+                                                        InvoiceStatus.Rejected => "danger",
+                                                        _ => "secondary"
+                                                    };
+                                                }
+                                                <span class="badge bg-@statusClass">@invoice.Status</span>
+                                            </td>
+                                            <td>@invoice.InvoiceDate.ToString("dd MMM yyyy")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-4">
+                            <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+                            <p class="mt-2">No recent invoices</p>
+                            <a asp-controller="Invoice" asp-action="Upload" class="btn btn-primary">
+                                <i class="bi bi-plus-lg me-2"></i>Upload Invoice
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions & Pending Approvals -->
+        <div class="col-lg-4 mb-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-lightning me-2"></i>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-controller="Invoice" asp-action="Upload" class="btn btn-primary">
+                            <i class="bi bi-upload me-2"></i>Upload Invoice
+                        </a>
+                        <a asp-controller="Vendor" asp-action="Create" class="btn btn-outline-primary">
+                            <i class="bi bi-person-plus me-2"></i>Add Vendor
+                        </a>
+                        <a asp-controller="Approval" asp-action="Index" class="btn btn-outline-warning">
+                            <i class="bi bi-check2-square me-2"></i>Review Approvals
+                        </a>
+                        <a asp-controller="Payment" asp-action="Index" class="btn btn-outline-success">
+                            <i class="bi bi-credit-card me-2"></i>Process Payments
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-bell me-2"></i>Pending Actions</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.PendingApprovals != null && Model.PendingApprovals.Any())
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var approval in Model.PendingApprovals.Take(5))
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                    <div>
+                                        <strong>@approval.InvoiceNumber</strong><br />
+                                        <small class="text-muted">@approval.VendorName</small>
+                                    </div>
+                                    <a asp-controller="Invoice" asp-action="Review" asp-route-id="@approval.InvoiceId" class="btn btn-sm btn-outline-primary">
+                                        Review
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center mb-0">No pending approvals</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

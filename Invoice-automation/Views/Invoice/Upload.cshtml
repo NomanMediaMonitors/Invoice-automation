@@ -1,0 +1,167 @@
+@model InvoiceAutomation.Web.ViewModels.InvoiceUploadViewModel
+@{
+    ViewData["Title"] = "Upload Invoice";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-upload me-2"></i>Upload Invoice</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index">Invoices</a></li>
+                    <li class="breadcrumb-item active">Upload</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Upload Invoice Document</h5>
+                </div>
+                <div class="card-body">
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+                    }
+
+                    <form asp-action="Upload" method="post" enctype="multipart/form-data" id="uploadForm">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <!-- File Upload Area -->
+                        <div class="mb-4">
+                            <label class="form-label">Invoice Document</label>
+                            <div class="upload-area border border-2 border-dashed rounded p-5 text-center" id="dropZone">
+                                <input type="file" asp-for="File" class="d-none" id="fileInput" accept=".pdf,.png,.jpg,.jpeg" />
+                                <div id="uploadPlaceholder">
+                                    <i class="bi bi-cloud-upload" style="font-size: 3rem;" class="text-muted"></i>
+                                    <h5 class="mt-3">Drag & Drop or Click to Upload</h5>
+                                    <p class="text-muted mb-0">Supported formats: PDF, PNG, JPG (Max 10MB)</p>
+                                    <button type="button" class="btn btn-outline-primary mt-3" onclick="document.getElementById('fileInput').click()">
+                                        <i class="bi bi-folder2-open me-2"></i>Browse Files
+                                    </button>
+                                </div>
+                                <div id="filePreview" class="d-none">
+                                    <i class="bi bi-file-earmark-check text-success" style="font-size: 3rem;"></i>
+                                    <h5 class="mt-3" id="fileName"></h5>
+                                    <p class="text-muted" id="fileSize"></p>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="clearFile()">
+                                        <i class="bi bi-x-lg me-1"></i>Remove
+                                    </button>
+                                </div>
+                            </div>
+                            <span asp-validation-for="File" class="text-danger"></span>
+                        </div>
+
+                        <!-- Vendor Selection -->
+                        <div class="mb-4">
+                            <label asp-for="VendorId" class="form-label">Vendor (Optional)</label>
+                            <select asp-for="VendorId" class="form-select" asp-items="@(new SelectList(Model.Vendors ?? new List<SelectListItem>(), "Value", "Text"))">
+                                <option value="">-- Auto-detect from invoice --</option>
+                            </select>
+                            <small class="text-muted">If not selected, the system will try to identify the vendor using OCR</small>
+                            <span asp-validation-for="VendorId" class="text-danger"></span>
+                        </div>
+
+                        <!-- OCR Options -->
+                        <div class="card bg-light mb-4">
+                            <div class="card-body">
+                                <h6 class="card-title"><i class="bi bi-eye me-2"></i>OCR Processing</h6>
+                                <p class="small text-muted mb-2">The system will automatically extract:</p>
+                                <ul class="small text-muted mb-0">
+                                    <li>Invoice number and dates</li>
+                                    <li>Vendor information (Name, NTN)</li>
+                                    <li>Line items and amounts</li>
+                                    <li>Tax details and totals</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                <i class="bi bi-upload me-2"></i>Upload & Process
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-lg me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+        const filePreview = document.getElementById('filePreview');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Drag and drop handlers
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-primary', 'bg-light');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-primary', 'bg-light');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-primary', 'bg-light');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                showFilePreview(files[0]);
+            }
+        });
+
+        dropZone.addEventListener('click', () => {
+            if (!filePreview.classList.contains('d-none')) return;
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                showFilePreview(e.target.files[0]);
+            }
+        });
+
+        function showFilePreview(file) {
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            uploadPlaceholder.classList.add('d-none');
+            filePreview.classList.remove('d-none');
+        }
+
+        function clearFile() {
+            fileInput.value = '';
+            uploadPlaceholder.classList.remove('d-none');
+            filePreview.classList.add('d-none');
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Form submission
+        document.getElementById('uploadForm').addEventListener('submit', function() {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+        });
+    </script>
+}

@@ -1,0 +1,193 @@
+@model InvoiceAutomation.Web.ViewModels.PaymentDetailsViewModel
+@{
+    ViewData["Title"] = "Payment Details";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-receipt me-2"></i>Payment Details</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index">Payments</a></li>
+                    <li class="breadcrumb-item active">Details</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Payment Summary -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-credit-card me-2"></i>Payment Summary</h5>
+                    @{
+                        var statusClass = Model.Status switch
+                        {
+                            PaymentStatus.Completed => "success",
+                            PaymentStatus.Failed => "danger",
+                            _ => "secondary"
+                        };
+                    }
+                    <span class="badge bg-@statusClass fs-6">@Model.Status</span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-5">Invoice #:</dt>
+                                <dd class="col-sm-7">
+                                    <a asp-controller="Invoice" asp-action="Edit" asp-route-id="@Model.InvoiceId">
+                                        @Model.InvoiceNumber
+                                    </a>
+                                </dd>
+
+                                <dt class="col-sm-5">Vendor:</dt>
+                                <dd class="col-sm-7">@Model.VendorName</dd>
+
+                                <dt class="col-sm-5">Payment Method:</dt>
+                                <dd class="col-sm-7">@Model.PaymentMethod</dd>
+
+                                <dt class="col-sm-5">Bank Account:</dt>
+                                <dd class="col-sm-7">@Model.BankAccountName</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-5">Scheduled Date:</dt>
+                                <dd class="col-sm-7">@Model.ScheduledDate?.ToString("dd MMM yyyy")</dd>
+
+                                <dt class="col-sm-5">Payment Date:</dt>
+                                <dd class="col-sm-7">@Model.PaymentDate?.ToString("dd MMM yyyy")</dd>
+
+                                <dt class="col-sm-5">Reference:</dt>
+                                <dd class="col-sm-7">@(Model.TransactionReference ?? "N/A")</dd>
+
+                                <dt class="col-sm-5">Amount:</dt>
+                                <dd class="col-sm-7 h4 text-success">PKR @Model.Amount.ToString("N2")</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Journal Entry -->
+            @if (Model.JournalEntries != null && Model.JournalEntries.Any())
+            {
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-journal-text me-2"></i>Journal Entry</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <small class="text-muted">Journal ID: @Model.JournalEntryId</small>
+                        </div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Account</th>
+                                    <th>Description</th>
+                                    <th class="text-end">Debit</th>
+                                    <th class="text-end">Credit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var entry in Model.JournalEntries)
+                                {
+                                    <tr>
+                                        <td>@entry.AccountName</td>
+                                        <td>@entry.Description</td>
+                                        <td class="text-end">@(entry.DebitAmount > 0 ? "PKR " + entry.DebitAmount.ToString("N2") : "-")</td>
+                                        <td class="text-end">@(entry.CreditAmount > 0 ? "PKR " + entry.CreditAmount.ToString("N2") : "-")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <th colspan="2">Total</th>
+                                    <th class="text-end">PKR @Model.JournalEntries.Sum(j => j.DebitAmount).ToString("N2")</th>
+                                    <th class="text-end">PKR @Model.JournalEntries.Sum(j => j.CreditAmount).ToString("N2")</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            <!-- Notes -->
+            @if (!string.IsNullOrEmpty(Model.Notes))
+            {
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-sticky me-2"></i>Notes</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-0">@Model.Notes</p>
+                    </div>
+                </div>
+            }
+
+            <div class="d-flex gap-2">
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Payments
+                </a>
+                <a asp-controller="Invoice" asp-action="Edit" asp-route-id="@Model.InvoiceId" class="btn btn-outline-primary">
+                    <i class="bi bi-receipt me-2"></i>View Invoice
+                </a>
+            </div>
+        </div>
+
+        <!-- Audit Trail -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Audit Trail</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        @if (Model.CreatedAt.HasValue)
+                        {
+                            <li class="mb-3 pb-3 border-bottom">
+                                <div class="d-flex">
+                                    <div class="me-3">
+                                        <span class="badge bg-info rounded-circle p-2">
+                                            <i class="bi bi-calendar-plus"></i>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <strong>Payment Scheduled</strong>
+                                        <br />
+                                        <small class="text-muted">@Model.CreatedAt.Value.ToString("dd MMM yyyy HH:mm")</small>
+                                        <br />
+                                        <small>by @Model.CreatedByName</small>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                        @if (Model.PaymentDate.HasValue)
+                        {
+                            <li class="mb-3">
+                                <div class="d-flex">
+                                    <div class="me-3">
+                                        <span class="badge bg-success rounded-circle p-2">
+                                            <i class="bi bi-check-lg"></i>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <strong>Payment Executed</strong>
+                                        <br />
+                                        <small class="text-muted">@Model.PaymentDate.Value.ToString("dd MMM yyyy HH:mm")</small>
+                                        <br />
+                                        <small>by @Model.ExecutedByName</small>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

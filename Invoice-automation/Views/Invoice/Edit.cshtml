@@ -1,0 +1,407 @@
+@model InvoiceAutomation.Web.ViewModels.InvoiceEditViewModel
+@{
+    ViewData["Title"] = "Edit Invoice";
+}
+
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2><i class="bi bi-pencil-square me-2"></i>Edit Invoice</h2>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a asp-action="Index">Invoices</a></li>
+                            <li class="breadcrumb-item active">@Model.InvoiceNumber</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div>
+                    @{
+                        var statusClass = Model.Status switch
+                        {
+                            InvoiceStatus.Draft => "secondary",
+                            InvoiceStatus.PendingManagerReview => "warning",
+                            InvoiceStatus.PendingAdminApproval => "info",
+                            InvoiceStatus.Approved => "success",
+                            InvoiceStatus.PaymentPending => "primary",
+                            InvoiceStatus.Completed => "success",
+                            InvoiceStatus.Rejected => "danger",
+                            _ => "secondary"
+                        };
+                    }
+                    <span class="badge bg-@statusClass fs-6">@Model.Status</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <!-- Invoice Image Preview -->
+        <div class="col-lg-5 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-image me-2"></i>Invoice Document</h5>
+                    <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-secondary" onclick="zoomIn()">
+                            <i class="bi bi-zoom-in"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="zoomOut()">
+                            <i class="bi bi-zoom-out"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="resetZoom()">
+                            <i class="bi bi-arrows-angle-expand"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-0 overflow-auto" style="max-height: calc(100vh - 200px);">
+                    <div id="imageContainer" style="transform-origin: top left;">
+                        @if (!string.IsNullOrEmpty(Model.ImagePath))
+                        {
+                            @if (Model.ImagePath.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <embed src="@Url.Action("GetInvoiceFile", new { id = Model.Id })" type="application/pdf" width="100%" style="min-height: 800px;" />
+                            }
+                            else
+                            {
+                                <img src="@Url.Action("GetInvoiceFile", new { id = Model.Id })" class="img-fluid" id="invoiceImage" alt="Invoice" />
+                            }
+                        }
+                        else
+                        {
+                            <div class="text-center text-muted py-5">
+                                <i class="bi bi-file-earmark-x" style="font-size: 4rem;"></i>
+                                <p class="mt-3">No invoice document available</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Invoice Edit Form -->
+        <div class="col-lg-7 mb-4">
+            <form asp-action="Edit" method="post" id="invoiceForm">
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="CompanyId" />
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <!-- Basic Info Card -->
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Invoice Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="InvoiceNumber" class="form-label">Invoice Number</label>
+                                <input asp-for="InvoiceNumber" class="form-control" />
+                                <span asp-validation-for="InvoiceNumber" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="VendorId" class="form-label">Vendor</label>
+                                <select asp-for="VendorId" class="form-select" asp-items="@(new SelectList(Model.Vendors ?? new List<SelectListItem>(), "Value", "Text"))">
+                                    <option value="">-- Select Vendor --</option>
+                                </select>
+                                <span asp-validation-for="VendorId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="InvoiceDate" class="form-label">Invoice Date</label>
+                                <input asp-for="InvoiceDate" type="date" class="form-control" />
+                                <span asp-validation-for="InvoiceDate" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="DueDate" class="form-label">Due Date</label>
+                                <input asp-for="DueDate" type="date" class="form-control" />
+                                <span asp-validation-for="DueDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="VendorNtn" class="form-label">Vendor NTN</label>
+                                <input asp-for="VendorNtn" class="form-control" readonly />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Match Type</label>
+                                <div>
+                                    @{
+                                        var matchClass = Model.MatchType switch
+                                        {
+                                            MatchType.Exact => "success",
+                                            MatchType.Partial => "warning",
+                                            MatchType.Manual => "info",
+                                            _ => "secondary"
+                                        };
+                                    }
+                                    <span class="badge bg-@matchClass fs-6">@Model.MatchType</span>
+                                    @if (Model.OcrConfidence.HasValue)
+                                    {
+                                        <small class="text-muted ms-2">OCR Confidence: @Model.OcrConfidence.Value.ToString("P0")</small>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Line Items Card -->
+                <div class="card mb-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-list-ul me-2"></i>Line Items</h5>
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="addLineItem()">
+                            <i class="bi bi-plus-lg me-1"></i>Add Item
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm" id="lineItemsTable">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 30%;">Description</th>
+                                        <th style="width: 25%;">Expense Account</th>
+                                        <th style="width: 10%;">Qty</th>
+                                        <th style="width: 15%;">Unit Price</th>
+                                        <th style="width: 15%;">Amount</th>
+                                        <th style="width: 5%;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lineItemsBody">
+                                    @if (Model.Items != null)
+                                    {
+                                        for (int i = 0; i < Model.Items.Count; i++)
+                                        {
+                                            <tr class="line-item-row">
+                                                <td>
+                                                    <input type="hidden" name="Items[@i].Id" value="@Model.Items[i].Id" />
+                                                    <input type="text" name="Items[@i].Description" value="@Model.Items[i].Description" class="form-control form-control-sm" />
+                                                </td>
+                                                <td>
+                                                    <select name="Items[@i].ExpenseAccountId" class="form-select form-select-sm expense-account">
+                                                        <option value="">-- Select --</option>
+                                                        @if (Model.ExpenseAccounts != null)
+                                                        {
+                                                            @foreach (var account in Model.ExpenseAccounts)
+                                                            {
+                                                                <option value="@account.Value" selected="@(account.Value == Model.Items[i].ExpenseAccountId)">@account.Text</option>
+                                                            }
+                                                        }
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input type="number" name="Items[@i].Quantity" value="@Model.Items[i].Quantity" class="form-control form-control-sm quantity" min="0" step="0.01" onchange="calculateLineAmount(this)" />
+                                                </td>
+                                                <td>
+                                                    <input type="number" name="Items[@i].UnitPrice" value="@Model.Items[i].UnitPrice" class="form-control form-control-sm unit-price" min="0" step="0.01" onchange="calculateLineAmount(this)" />
+                                                </td>
+                                                <td>
+                                                    <input type="number" name="Items[@i].Amount" value="@Model.Items[i].Amount" class="form-control form-control-sm line-amount" readonly />
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeLineItem(this)">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Amounts Card -->
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-calculator me-2"></i>Amounts</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 offset-md-6">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Subtotal:</span>
+                                    <span id="subtotalDisplay">PKR @Model.SubTotal.ToString("N2")</span>
+                                    <input type="hidden" asp-for="SubTotal" id="subtotalInput" />
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Tax Amount:</span>
+                                    <div class="input-group input-group-sm" style="width: 150px;">
+                                        <span class="input-group-text">PKR</span>
+                                        <input asp-for="TaxAmount" type="number" class="form-control" step="0.01" onchange="calculateTotal()" />
+                                    </div>
+                                </div>
+                                <hr />
+                                <div class="d-flex justify-content-between fw-bold">
+                                    <span>Total Amount:</span>
+                                    <span id="totalDisplay">PKR @Model.TotalAmount.ToString("N2")</span>
+                                    <input type="hidden" asp-for="TotalAmount" id="totalInput" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes Card -->
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-sticky me-2"></i>Notes</h5>
+                    </div>
+                    <div class="card-body">
+                        <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Add any notes about this invoice..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex gap-2 flex-wrap">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg me-2"></i>Save Changes
+                    </button>
+                    @if (Model.Status == InvoiceStatus.Draft)
+                    {
+                        <button type="submit" name="submitForApproval" value="true" class="btn btn-success">
+                            <i class="bi bi-send me-2"></i>Submit for Approval
+                        </button>
+                    }
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-lg me-2"></i>Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        let currentZoom = 1;
+        const zoomStep = 0.1;
+
+        function zoomIn() {
+            currentZoom += zoomStep;
+            applyZoom();
+        }
+
+        function zoomOut() {
+            if (currentZoom > 0.2) {
+                currentZoom -= zoomStep;
+                applyZoom();
+            }
+        }
+
+        function resetZoom() {
+            currentZoom = 1;
+            applyZoom();
+        }
+
+        function applyZoom() {
+            document.getElementById('imageContainer').style.transform = `scale(${currentZoom})`;
+        }
+
+        let lineItemIndex = @(Model.Items?.Count ?? 0);
+        const expenseAccounts = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ExpenseAccounts?.Select(a => new { value = a.Value, text = a.Text }) ?? new List<object>()));
+
+        function addLineItem() {
+            const tbody = document.getElementById('lineItemsBody');
+            const row = document.createElement('tr');
+            row.className = 'line-item-row';
+
+            let accountOptions = '<option value="">-- Select --</option>';
+            expenseAccounts.forEach(a => {
+                accountOptions += `<option value="${a.value}">${a.text}</option>`;
+            });
+
+            row.innerHTML = `
+                <td>
+                    <input type="hidden" name="Items[${lineItemIndex}].Id" value="" />
+                    <input type="text" name="Items[${lineItemIndex}].Description" class="form-control form-control-sm" />
+                </td>
+                <td>
+                    <select name="Items[${lineItemIndex}].ExpenseAccountId" class="form-select form-select-sm expense-account">
+                        ${accountOptions}
+                    </select>
+                </td>
+                <td>
+                    <input type="number" name="Items[${lineItemIndex}].Quantity" value="1" class="form-control form-control-sm quantity" min="0" step="0.01" onchange="calculateLineAmount(this)" />
+                </td>
+                <td>
+                    <input type="number" name="Items[${lineItemIndex}].UnitPrice" value="0" class="form-control form-control-sm unit-price" min="0" step="0.01" onchange="calculateLineAmount(this)" />
+                </td>
+                <td>
+                    <input type="number" name="Items[${lineItemIndex}].Amount" value="0" class="form-control form-control-sm line-amount" readonly />
+                </td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeLineItem(this)">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(row);
+            lineItemIndex++;
+            reindexItems();
+        }
+
+        function removeLineItem(btn) {
+            btn.closest('tr').remove();
+            reindexItems();
+            calculateSubtotal();
+        }
+
+        function reindexItems() {
+            const rows = document.querySelectorAll('.line-item-row');
+            rows.forEach((row, index) => {
+                row.querySelectorAll('input, select').forEach(input => {
+                    const name = input.getAttribute('name');
+                    if (name) {
+                        input.setAttribute('name', name.replace(/\[\d+\]/, `[${index}]`));
+                    }
+                });
+            });
+        }
+
+        function calculateLineAmount(input) {
+            const row = input.closest('tr');
+            const qty = parseFloat(row.querySelector('.quantity').value) || 0;
+            const price = parseFloat(row.querySelector('.unit-price').value) || 0;
+            const amount = qty * price;
+            row.querySelector('.line-amount').value = amount.toFixed(2);
+            calculateSubtotal();
+        }
+
+        function calculateSubtotal() {
+            let subtotal = 0;
+            document.querySelectorAll('.line-amount').forEach(input => {
+                subtotal += parseFloat(input.value) || 0;
+            });
+            document.getElementById('subtotalInput').value = subtotal.toFixed(2);
+            document.getElementById('subtotalDisplay').textContent = 'PKR ' + subtotal.toLocaleString('en-PK', { minimumFractionDigits: 2 });
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            const subtotal = parseFloat(document.getElementById('subtotalInput').value) || 0;
+            const tax = parseFloat(document.querySelector('[name="TaxAmount"]').value) || 0;
+            const total = subtotal + tax;
+            document.getElementById('totalInput').value = total.toFixed(2);
+            document.getElementById('totalDisplay').textContent = 'PKR ' + total.toLocaleString('en-PK', { minimumFractionDigits: 2 });
+        }
+    </script>
+}

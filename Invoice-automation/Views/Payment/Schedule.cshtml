@@ -1,0 +1,186 @@
+@model InvoiceAutomation.Web.ViewModels.PaymentScheduleViewModel
+@{
+    ViewData["Title"] = "Schedule Payment";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-calendar-plus me-2"></i>Schedule Payment</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index">Payments</a></li>
+                    <li class="breadcrumb-item active">Schedule</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Invoice Summary -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-receipt me-2"></i>Invoice Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="row mb-0">
+                                <dt class="col-sm-5">Invoice #:</dt>
+                                <dd class="col-sm-7">@Model.InvoiceNumber</dd>
+
+                                <dt class="col-sm-5">Vendor:</dt>
+                                <dd class="col-sm-7">@Model.VendorName</dd>
+
+                                <dt class="col-sm-5">Invoice Date:</dt>
+                                <dd class="col-sm-7">@Model.InvoiceDate.ToString("dd MMM yyyy")</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="row mb-0">
+                                <dt class="col-sm-5">Due Date:</dt>
+                                <dd class="col-sm-7">
+                                    @if (Model.DueDate.HasValue)
+                                    {
+                                        var isOverdue = Model.DueDate.Value < DateTime.Today;
+                                        <span class="@(isOverdue ? "text-danger fw-bold" : "")">
+                                            @Model.DueDate.Value.ToString("dd MMM yyyy")
+                                            @if (isOverdue)
+                                            {
+                                                <span class="badge bg-danger ms-1">Overdue</span>
+                                            }
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span>N/A</span>
+                                    }
+                                </dd>
+
+                                <dt class="col-sm-5">Total Amount:</dt>
+                                <dd class="col-sm-7 h5 text-primary">PKR @Model.TotalAmount.ToString("N2")</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule Form -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-calendar-check me-2"></i>Payment Details</h5>
+                </div>
+                <div class="card-body">
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+                    }
+
+                    <form asp-action="Schedule" method="post">
+                        <input type="hidden" asp-for="InvoiceId" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="ScheduledDate" class="form-label">Payment Date</label>
+                                <input asp-for="ScheduledDate" type="date" class="form-control" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                                <span asp-validation-for="ScheduledDate" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="PaymentMethod" class="form-label">Payment Method</label>
+                                <select asp-for="PaymentMethod" class="form-select">
+                                    <option value="BankTransfer">Bank Transfer</option>
+                                    <option value="Check">Check</option>
+                                    <option value="Cash">Cash</option>
+                                    <option value="CreditCard">Credit Card</option>
+                                </select>
+                                <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="BankAccountId" class="form-label">Pay From Account</label>
+                                <select asp-for="BankAccountId" class="form-select" asp-items="@(new SelectList(Model.BankAccounts ?? new List<SelectListItem>(), "Value", "Text"))">
+                                    <option value="">-- Select Bank Account --</option>
+                                </select>
+                                <span asp-validation-for="BankAccountId" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="ReferenceNumber" class="form-label">Reference Number (Optional)</label>
+                                <input asp-for="ReferenceNumber" class="form-control" placeholder="Check # or Reference" />
+                                <span asp-validation-for="ReferenceNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Notes" class="form-label">Notes (Optional)</label>
+                            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Add any payment notes..."></textarea>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-calendar-check me-2"></i>Schedule Payment
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-lg me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Journal Preview -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="bi bi-journal-text me-2"></i>Journal Entry Preview</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small">The following journal entry will be created when the payment is executed:</p>
+
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Account</th>
+                                <th class="text-end">Debit</th>
+                                <th class="text-end">Credit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Accounts Payable</td>
+                                <td class="text-end">@Model.TotalAmount.ToString("N2")</td>
+                                <td class="text-end">-</td>
+                            </tr>
+                            <tr>
+                                <td>Bank/Cash Account</td>
+                                <td class="text-end">-</td>
+                                <td class="text-end">@Model.TotalAmount.ToString("N2")</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="table-light">
+                                <th>Total</th>
+                                <th class="text-end">@Model.TotalAmount.ToString("N2")</th>
+                                <th class="text-end">@Model.TotalAmount.ToString("N2")</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div class="alert alert-info small mb-0">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Journal entry will be posted to your accounting system upon payment execution.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
