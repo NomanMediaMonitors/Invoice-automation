@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using CoreMatchType = InvoiceAutomation.Web.Core.Enums.MatchType;
 
 namespace InvoiceAutomation.Web.Controllers;
 
@@ -91,7 +92,8 @@ public class InvoiceController : Controller
                     Status = i.Status,
                     OcrConfidence = i.OcrConfidence,
                     CreatedAt = i.CreatedAt,
-                    UploadedByName = i.UploadedBy.FullName
+                    UploadedByName = i.UploadedBy.FullName,
+                    MatchType = i.Items.FirstOrDefault()?.MatchType ?? CoreMatchType.Manual
                 }).ToList(),
                 TotalCount = result.TotalCount,
                 Page = result.Page,
@@ -229,7 +231,9 @@ public class InvoiceController : Controller
                 Comments = a.Comments,
                 DecidedAt = a.DecidedAt,
                 CreatedAt = a.CreatedAt
-            }).ToList()
+            }).ToList(),
+            MatchType = invoice.Items.FirstOrDefault()?.MatchType ?? CoreMatchType.Manual,
+            VendorNtn = invoice.Vendor?.Ntn
         };
 
         return View(model);
@@ -267,7 +271,7 @@ public class InvoiceController : Controller
                     TaxAmount = i.TaxAmount,
                     Amount = i.Amount,
                     LineNumber = i.LineNumber,
-                    MatchType = MatchType.Manual
+                    MatchType = CoreMatchType.Manual
                 }).ToList()
             };
 
