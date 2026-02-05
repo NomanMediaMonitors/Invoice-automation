@@ -1,4 +1,5 @@
 using InvoiceAutomation.Web.Core.Enums;
+using CoreMatchType = InvoiceAutomation.Web.Core.Enums.MatchType;
 
 namespace InvoiceAutomation.Web.Core.Entities;
 
@@ -55,7 +56,7 @@ public class InvoiceItem
     /// <summary>
     /// How the expense account was matched
     /// </summary>
-    public MatchType MatchType { get; set; } = MatchType.Manual;
+    public CoreMatchType MatchType { get; set; } = CoreMatchType.Manual;
 
     /// <summary>
     /// AI confidence score for auto-matched accounts

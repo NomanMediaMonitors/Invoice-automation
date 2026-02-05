@@ -95,6 +95,35 @@ public class CompanyFormViewModel
     [Display(Name = "Default Currency")]
     public string DefaultCurrency { get; set; } = "PKR";
 
+    // Accounting Integration
+    [Display(Name = "Accounting Provider")]
+    public AccountingProvider AccountingProvider { get; set; } = AccountingProvider.None;
+
+    [Display(Name = "API Base URL")]
+    [Url]
+    public string? ApiBaseUrl { get; set; }
+
+    [Display(Name = "Client ID")]
+    public string? ClientId { get; set; }
+
+    [Display(Name = "Client Secret")]
+    public string? ClientSecret { get; set; }
+
+    [Display(Name = "Realm ID")]
+    public string? RealmId { get; set; }
+
+    // Approval Settings
+    [Display(Name = "Manager Approval Threshold")]
+    [Range(0, double.MaxValue)]
+    public decimal ManagerApprovalThreshold { get; set; } = 50000;
+
+    [Display(Name = "Admin Approval Threshold")]
+    [Range(0, double.MaxValue)]
+    public decimal AdminApprovalThreshold { get; set; } = 200000;
+
+    [Display(Name = "Active")]
+    public bool IsActive { get; set; } = true;
+
     public List<SelectListItem> CurrencyOptions { get; set; } = new();
     public List<SelectListItem> MonthOptions { get; set; } = new();
 }
