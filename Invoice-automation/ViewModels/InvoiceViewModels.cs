@@ -37,6 +37,7 @@ public class InvoiceListItemViewModel
     public decimal? OcrConfidence { get; set; }
     public DateTime CreatedAt { get; set; }
     public string UploadedByName { get; set; } = string.Empty;
+    public CoreMatchType MatchType { get; set; }
 }
 
 /// <summary>
@@ -126,6 +127,16 @@ public class InvoiceEditViewModel
     /// Approval history
     /// </summary>
     public List<ApprovalHistoryDto> ApprovalHistory { get; set; } = new();
+
+    /// <summary>
+    /// Match type for OCR extraction
+    /// </summary>
+    public CoreMatchType MatchType { get; set; }
+
+    /// <summary>
+    /// Vendor NTN for display
+    /// </summary>
+    public string? VendorNtn { get; set; }
 }
 
 /// <summary>

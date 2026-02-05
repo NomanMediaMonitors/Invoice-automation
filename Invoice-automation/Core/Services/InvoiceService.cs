@@ -5,6 +5,7 @@ using InvoiceAutomation.Web.Core.Enums;
 using InvoiceAutomation.Web.Core.Interfaces;
 using InvoiceAutomation.Web.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using CoreMatchType = InvoiceAutomation.Web.Core.Enums.MatchType;
 
 namespace InvoiceAutomation.Web.Core.Services;
 
@@ -100,14 +101,14 @@ public class InvoiceService : IInvoiceService
                     UnitPrice = item.UnitPrice ?? item.Amount ?? 0,
                     Amount = item.Amount ?? 0,
                     LineNumber = lineNumber++,
-                    MatchType = MatchType.Manual
+                    MatchType = CoreMatchType.Manual
                 };
 
                 // If vendor has default expense account, use it
                 if (!string.IsNullOrEmpty(vendor?.DefaultExpenseAccountId))
                 {
                     invoiceItem.ExpenseAccountId = vendor.DefaultExpenseAccountId;
-                    invoiceItem.MatchType = MatchType.VendorDefault;
+                    invoiceItem.MatchType = CoreMatchType.VendorDefault;
                 }
 
                 invoice.Items.Add(invoiceItem);
@@ -125,7 +126,7 @@ public class InvoiceService : IInvoiceService
                 UnitPrice = invoice.TotalAmount,
                 Amount = invoice.TotalAmount,
                 LineNumber = 1,
-                MatchType = MatchType.Manual,
+                MatchType = CoreMatchType.Manual,
                 ExpenseAccountId = vendor?.DefaultExpenseAccountId
             });
         }
