@@ -13,7 +13,7 @@ public interface IInvoiceService
     /// <summary>
     /// Create a new invoice from uploaded file
     /// </summary>
-    Task<Invoice> CreateFromUploadAsync(Guid companyId, Guid userId, IFormFile file);
+    Task<Invoice> CreateFromUploadAsync(Guid companyId, Guid userId, IFormFile file, Guid? vendorId = null);
 
     /// <summary>
     /// Get an invoice by ID

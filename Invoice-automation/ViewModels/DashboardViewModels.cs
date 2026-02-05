@@ -30,7 +30,7 @@ public class DashboardViewModel
     /// <summary>
     /// Invoices pending approval (for managers/admins)
     /// </summary>
-    public List<InvoiceListItemViewModel> PendingApproval { get; set; } = new();
+    public List<PendingApprovalItemViewModel> PendingApprovals { get; set; } = new();
 
     /// <summary>
     /// Pending payments
@@ -40,10 +40,17 @@ public class DashboardViewModel
     /// <summary>
     /// Counts for quick view
     /// </summary>
-    public int DraftCount { get; set; }
-    public int PendingApprovalCount { get; set; }
-    public int ApprovedCount { get; set; }
-    public int PendingPaymentCount { get; set; }
+    public int TotalInvoices { get; set; }
+    public int PendingApproval { get; set; }
+    public int ApprovedInvoices { get; set; }
+    public int PendingPayment { get; set; }
+
+    /// <summary>
+    /// Amount statistics
+    /// </summary>
+    public decimal TotalAmount { get; set; }
+    public decimal PaidAmount { get; set; }
+    public decimal OutstandingAmount { get; set; }
 
     /// <summary>
     /// Whether accounting is connected

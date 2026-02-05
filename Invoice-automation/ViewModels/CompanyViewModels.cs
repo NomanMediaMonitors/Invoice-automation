@@ -151,6 +151,11 @@ public class CompanyUsersViewModel
     // Add user form
     public AddUserFormModel AddUserForm { get; set; } = new();
     public List<SelectListItem> RoleOptions { get; set; } = new();
+
+    /// <summary>
+    /// Available users that can be added to the company
+    /// </summary>
+    public List<SelectListItem> AvailableUsers { get; set; } = new();
 }
 
 /// <summary>

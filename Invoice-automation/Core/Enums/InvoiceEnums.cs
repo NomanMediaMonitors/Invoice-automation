@@ -13,7 +13,8 @@ public enum InvoiceStatus
     Approved = 5,
     PaymentPending = 6,
     PaymentProcessing = 7,
-    Completed = 8
+    Completed = 8,
+    Rejected = 9  // General rejected status for simpler handling
 }
 
 /// <summary>

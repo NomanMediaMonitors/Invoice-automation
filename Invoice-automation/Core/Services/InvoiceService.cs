@@ -33,7 +33,7 @@ public class InvoiceService : IInvoiceService
         _logger = logger;
     }
 
-    public async Task<Invoice> CreateFromUploadAsync(Guid companyId, Guid userId, IFormFile file)
+    public async Task<Invoice> CreateFromUploadAsync(Guid companyId, Guid userId, IFormFile file, Guid? vendorId = null)
     {
         _logger.LogInformation("Creating invoice from upload for company {CompanyId}", companyId);
 
@@ -53,11 +53,12 @@ public class InvoiceService : IInvoiceService
             _logger.LogWarning(ex, "OCR failed, creating invoice without extracted data");
         }
 
-        // 3. Try to match vendor by NTN
-        Vendor? vendor = null;
-        if (!string.IsNullOrEmpty(ocrResult?.VendorNtn))
+        // 3. Try to match vendor - use provided vendorId, or fallback to OCR NTN match
+        Guid? matchedVendorId = vendorId;
+        if (!matchedVendorId.HasValue && !string.IsNullOrEmpty(ocrResult?.VendorNtn))
         {
-            vendor = await _vendorService.FindByNtnAsync(companyId, ocrResult.VendorNtn);
+            var vendor = await _vendorService.FindByNtnAsync(companyId, ocrResult.VendorNtn);
+            matchedVendorId = vendor?.Id;
         }
 
         // 4. Create invoice
@@ -65,7 +66,7 @@ public class InvoiceService : IInvoiceService
         {
             Id = Guid.NewGuid(),
             CompanyId = companyId,
-            VendorId = vendor?.Id,
+            VendorId = matchedVendorId,
             UploadedById = userId,
             InvoiceNumber = ocrResult?.InvoiceNumber ?? "PENDING",
             InvoiceDate = ocrResult?.InvoiceDate ?? DateTime.Today,

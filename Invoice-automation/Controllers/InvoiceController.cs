@@ -111,6 +111,7 @@ public class InvoiceController : Controller
     {
         var companyId = GetCurrentCompanyId();
         var company = await _context.Companies.FindAsync(companyId);
+        var vendors = await _vendorService.GetByCompanyIdAsync(companyId);
 
         var model = new InvoiceUploadViewModel
         {
@@ -118,7 +119,8 @@ public class InvoiceController : Controller
             Companies = new List<SelectListItem>
             {
                 new(company?.Name ?? "", companyId.ToString())
-            }
+            },
+            Vendors = vendors.Select(v => new SelectListItem(v.Name, v.Id.ToString())).ToList()
         };
 
         return View(model);
@@ -130,13 +132,15 @@ public class InvoiceController : Controller
     {
         if (!ModelState.IsValid)
         {
+            var vendors = await _vendorService.GetByCompanyIdAsync(model.CompanyId);
+            model.Vendors = vendors.Select(v => new SelectListItem(v.Name, v.Id.ToString())).ToList();
             return View(model);
         }
 
         try
         {
             var userId = GetCurrentUserId();
-            var invoice = await _invoiceService.CreateFromUploadAsync(model.CompanyId, userId, model.InvoiceFile);
+            var invoice = await _invoiceService.CreateFromUploadAsync(model.CompanyId, userId, model.File, model.VendorId);
 
             TempData["Success"] = "Invoice uploaded successfully. Please review the extracted data.";
 
@@ -150,6 +154,8 @@ public class InvoiceController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Invoice upload failed");
+            var vendors = await _vendorService.GetByCompanyIdAsync(model.CompanyId);
+            model.Vendors = vendors.Select(v => new SelectListItem(v.Name, v.Id.ToString())).ToList();
             ModelState.AddModelError("", $"Upload failed: {ex.Message}");
             return View(model);
         }
@@ -189,7 +195,7 @@ public class InvoiceController : Controller
                 InvoiceNumber = invoice.InvoiceNumber,
                 InvoiceDate = invoice.InvoiceDate,
                 DueDate = invoice.DueDate,
-                Subtotal = invoice.Subtotal,
+                SubTotal = invoice.Subtotal,
                 TaxAmount = invoice.TaxAmount,
                 TotalAmount = invoice.TotalAmount,
                 Currency = invoice.Currency,
@@ -337,7 +343,7 @@ public class InvoiceController : Controller
             DueDate = invoice.DueDate,
             VendorName = invoice.Vendor?.Name ?? "Unknown",
             VendorNtn = invoice.Vendor?.Ntn,
-            Subtotal = invoice.Subtotal,
+            SubTotal = invoice.Subtotal,
             TaxAmount = invoice.TaxAmount,
             TotalAmount = invoice.TotalAmount,
             Currency = invoice.Currency,
