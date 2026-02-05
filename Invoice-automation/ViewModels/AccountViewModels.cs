@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using InvoiceAutomation.Web.Core.DTOs;
 
 namespace InvoiceAutomation.Web.ViewModels;
 
@@ -28,10 +29,18 @@ public class LoginViewModel
 /// </summary>
 public class RegisterViewModel
 {
-    [Required(ErrorMessage = "Full name is required")]
+    [Required(ErrorMessage = "First name is required")]
+    [Display(Name = "First Name")]
+    [StringLength(100, MinimumLength = 1)]
+    public string FirstName { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Last name is required")]
+    [Display(Name = "Last Name")]
+    [StringLength(100, MinimumLength = 1)]
+    public string LastName { get; set; } = string.Empty;
+
     [Display(Name = "Full Name")]
-    [StringLength(200, MinimumLength = 2)]
-    public string FullName { get; set; } = string.Empty;
+    public string FullName => $"{FirstName} {LastName}".Trim();
 
     [Required(ErrorMessage = "Email is required")]
     [EmailAddress(ErrorMessage = "Invalid email address")]
@@ -107,10 +116,18 @@ public class ProfileViewModel
 {
     public Guid Id { get; set; }
 
-    [Required(ErrorMessage = "Full name is required")]
+    [Required(ErrorMessage = "First name is required")]
+    [Display(Name = "First Name")]
+    [StringLength(100, MinimumLength = 1)]
+    public string FirstName { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Last name is required")]
+    [Display(Name = "Last Name")]
+    [StringLength(100, MinimumLength = 1)]
+    public string LastName { get; set; } = string.Empty;
+
     [Display(Name = "Full Name")]
-    [StringLength(200, MinimumLength = 2)]
-    public string FullName { get; set; } = string.Empty;
+    public string FullName => $"{FirstName} {LastName}".Trim();
 
     [Display(Name = "Email")]
     public string Email { get; set; } = string.Empty;
@@ -122,6 +139,11 @@ public class ProfileViewModel
     public bool EmailVerified { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? LastLoginAt { get; set; }
+
+    /// <summary>
+    /// User's company memberships
+    /// </summary>
+    public List<UserCompanyDto> Companies { get; set; } = new();
 }
 
 /// <summary>
@@ -145,4 +167,15 @@ public class ChangePasswordViewModel
     [Display(Name = "Confirm New Password")]
     [Compare("NewPassword", ErrorMessage = "Passwords do not match")]
     public string ConfirmNewPassword { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Alias for ConfirmNewPassword for view compatibility
+    /// </summary>
+    [DataType(DataType.Password)]
+    [Display(Name = "Confirm Password")]
+    public string ConfirmPassword
+    {
+        get => ConfirmNewPassword;
+        set => ConfirmNewPassword = value;
+    }
 }
