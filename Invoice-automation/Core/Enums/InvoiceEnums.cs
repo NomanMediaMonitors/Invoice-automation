@@ -24,7 +24,9 @@ public enum MatchType
 {
     Manual = 0,
     VendorDefault = 1,
-    AiMatch = 2
+    AiMatch = 2,
+    Exact = 3,
+    Partial = 4
 }
 
 /// <summary>
@@ -34,7 +36,8 @@ public enum ApprovalLevel
 {
     Manager = 1,
     Admin = 2,
-    CFO = 3
+    CFO = 3,
+    SuperAdmin = 4
 }
 
 /// <summary>
@@ -52,10 +55,11 @@ public enum ApprovalStatus
 /// </summary>
 public enum PaymentStatus
 {
-    Scheduled = 0,
-    Processing = 1,
-    Completed = 2,
-    Failed = 3
+    Pending = 0,
+    Scheduled = 1,
+    Processing = 2,
+    Completed = 3,
+    Failed = 4
 }
 
 /// <summary>
@@ -65,7 +69,8 @@ public enum AccountingProvider
 {
     None = 0,
     Endraaj = 1,
-    QuickBooks = 2
+    QuickBooks = 2,
+    Mock = 3
 }
 
 /// <summary>

@@ -73,7 +73,7 @@ public class TesseractOcrService : IOcrService, IDisposable
             }
 
             var allText = new StringBuilder();
-            float totalConfidence = 0;
+            decimal totalConfidence = 0;
             int pageCount = 0;
 
             foreach (var imagePath in images)
@@ -88,7 +88,7 @@ public class TesseractOcrService : IOcrService, IDisposable
                     using var page = _engine.Process(img);
 
                     var pageText = page.GetText();
-                    var pageConfidence = page.GetMeanConfidence() * 100;
+                    var pageConfidence = (decimal)(page.GetMeanConfidence() * 100);
 
                     allText.AppendLine(pageText);
                     totalConfidence += pageConfidence;
