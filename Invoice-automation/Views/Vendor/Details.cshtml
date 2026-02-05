@@ -1,0 +1,224 @@
+@model InvoiceAutomation.Web.ViewModels.VendorDetailsViewModel
+@{
+    ViewData["Title"] = "Vendor Details";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2><i class="bi bi-person me-2"></i>@Model.Name</h2>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a asp-action="Index">Vendors</a></li>
+                            <li class="breadcrumb-item active">@Model.Name</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div>
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                        <i class="bi bi-pencil me-2"></i>Edit
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4">
+            <!-- Vendor Info Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Vendor Information</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Name:</dt>
+                        <dd class="col-sm-8">@Model.Name</dd>
+
+                        <dt class="col-sm-4">NTN:</dt>
+                        <dd class="col-sm-8">
+                            @if (!string.IsNullOrEmpty(Model.Ntn))
+                            {
+                                <code>@Model.Ntn</code>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Not provided</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4">Contact:</dt>
+                        <dd class="col-sm-8">@(Model.ContactPerson ?? "-")</dd>
+
+                        <dt class="col-sm-4">Phone:</dt>
+                        <dd class="col-sm-8">
+                            @if (!string.IsNullOrEmpty(Model.Phone))
+                            {
+                                <a href="tel:@Model.Phone">@Model.Phone</a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4">Email:</dt>
+                        <dd class="col-sm-8">
+                            @if (!string.IsNullOrEmpty(Model.Email))
+                            {
+                                <a href="mailto:@Model.Email">@Model.Email</a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4">Address:</dt>
+                        <dd class="col-sm-8">@(Model.Address ?? "-")</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Bank Details Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-bank me-2"></i>Bank Details</h5>
+                </div>
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(Model.BankName) || !string.IsNullOrEmpty(Model.BankAccountNumber))
+                    {
+                        <dl class="row mb-0">
+                            <dt class="col-sm-4">Bank:</dt>
+                            <dd class="col-sm-8">@(Model.BankName ?? "-")</dd>
+
+                            <dt class="col-sm-4">Account:</dt>
+                            <dd class="col-sm-8">@(Model.BankAccountNumber ?? "-")</dd>
+
+                            <dt class="col-sm-4">IBAN:</dt>
+                            <dd class="col-sm-8">
+                                @if (!string.IsNullOrEmpty(Model.BankIban))
+                                {
+                                    <code>@Model.BankIban</code>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </dd>
+                        </dl>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">No bank details provided</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Stats Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-graph-up me-2"></i>Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6 border-end">
+                            <div class="h3 mb-0 text-primary">@Model.TotalInvoices</div>
+                            <small class="text-muted">Invoices</small>
+                        </div>
+                        <div class="col-6">
+                            <div class="h5 mb-0 text-success">PKR @Model.TotalAmount.ToString("N0")</div>
+                            <small class="text-muted">Total Amount</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <!-- Recent Invoices -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-receipt me-2"></i>Invoices</h5>
+                    <a asp-controller="Invoice" asp-action="Index" asp-route-vendorId="@Model.Id" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentInvoices != null && Model.RecentInvoices.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Invoice #</th>
+                                        <th>Date</th>
+                                        <th>Due Date</th>
+                                        <th class="text-end">Amount</th>
+                                        <th>Status</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var invoice in Model.RecentInvoices)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <a asp-controller="Invoice" asp-action="Edit" asp-route-id="@invoice.Id">
+                                                    @invoice.InvoiceNumber
+                                                </a>
+                                            </td>
+                                            <td>@invoice.InvoiceDate.ToString("dd MMM yyyy")</td>
+                                            <td>
+                                                @if (invoice.DueDate.HasValue)
+                                                {
+                                                    var isOverdue = invoice.DueDate.Value < DateTime.Today && invoice.Status != InvoiceStatus.Completed;
+                                                    <span class="@(isOverdue ? "text-danger" : "")">
+                                                        @invoice.DueDate.Value.ToString("dd MMM yyyy")
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td class="text-end">PKR @invoice.TotalAmount.ToString("N0")</td>
+                                            <td>
+                                                @{
+                                                    var statusClass = invoice.Status switch
+                                                    {
+                                                        InvoiceStatus.Draft => "secondary",
+                                                        InvoiceStatus.PendingManagerReview => "warning",
+                                                        InvoiceStatus.PendingAdminApproval => "info",
+                                                        InvoiceStatus.Approved => "success",
+                                                        InvoiceStatus.PaymentPending => "primary",
+                                                        InvoiceStatus.Completed => "success",
+                                                        InvoiceStatus.Rejected => "danger",
+                                                        _ => "secondary"
+                                                    };
+                                                }
+                                                <span class="badge bg-@statusClass">@invoice.Status</span>
+                                            </td>
+                                            <td>
+                                                <a asp-controller="Invoice" asp-action="Edit" asp-route-id="@invoice.Id" class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+                            <p class="text-muted mt-2">No invoices from this vendor yet</p>
+                            <a asp-controller="Invoice" asp-action="Upload" class="btn btn-primary btn-sm">
+                                <i class="bi bi-upload me-1"></i>Upload Invoice
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

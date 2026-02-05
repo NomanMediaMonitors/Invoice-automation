@@ -1,0 +1,176 @@
+@model InvoiceAutomation.Web.ViewModels.CompanyUsersViewModel
+@{
+    ViewData["Title"] = "Company Users";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-people me-2"></i>Manage Users - @Model.CompanyName</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index">Companies</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Details" asp-route-id="@Model.CompanyId">@Model.CompanyName</a></li>
+                    <li class="breadcrumb-item active">Users</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Current Users -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Company Users</h5>
+                </div>
+                <div class="card-body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show">
+                            @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            @TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (Model.Users != null && Model.Users.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var user in Model.Users)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@user.FullName</strong>
+                                            </td>
+                                            <td>@user.Email</td>
+                                            <td>
+                                                <form asp-action="UpdateUserRole" method="post" class="d-inline">
+                                                    <input type="hidden" name="companyId" value="@Model.CompanyId" />
+                                                    <input type="hidden" name="userId" value="@user.UserId" />
+                                                    <select name="role" class="form-select form-select-sm d-inline-block" style="width: auto;" onchange="this.form.submit()">
+                                                        @foreach (var role in Enum.GetValues<UserRole>())
+                                                        {
+                                                            <option value="@role" selected="@(user.Role == role)">@role</option>
+                                                        }
+                                                    </select>
+                                                </form>
+                                            </td>
+                                            <td>
+                                                <form asp-action="RemoveUser" method="post" class="d-inline" onsubmit="return confirm('Remove this user from the company?')">
+                                                    <input type="hidden" name="companyId" value="@Model.CompanyId" />
+                                                    <input type="hidden" name="userId" value="@user.UserId" />
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                        <i class="bi bi-person-dash"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No users assigned to this company</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Add User -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-person-plus me-2"></i>Add User</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="AddUser" method="post">
+                        <input type="hidden" name="companyId" value="@Model.CompanyId" />
+
+                        <div class="mb-3">
+                            <label class="form-label">Select User</label>
+                            <select name="userId" class="form-select" required>
+                                <option value="">-- Select User --</option>
+                                @if (Model.AvailableUsers != null)
+                                {
+                                    @foreach (var user in Model.AvailableUsers)
+                                    {
+                                        <option value="@user.Value">@user.Text</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Role</label>
+                            <select name="role" class="form-select" required>
+                                @foreach (var role in Enum.GetValues<UserRole>())
+                                {
+                                    <option value="@role">@role</option>
+                                }
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-person-plus me-2"></i>Add User
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Role Legend -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Role Permissions</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <span class="badge bg-danger">SuperAdmin</span>
+                            <small class="d-block text-muted">Full system access</small>
+                        </li>
+                        <li class="mb-2">
+                            <span class="badge bg-warning">Admin</span>
+                            <small class="d-block text-muted">Company management, final approval</small>
+                        </li>
+                        <li class="mb-2">
+                            <span class="badge bg-info">Manager</span>
+                            <small class="d-block text-muted">Invoice approval, team management</small>
+                        </li>
+                        <li class="mb-2">
+                            <span class="badge bg-success">Approver</span>
+                            <small class="d-block text-muted">Invoice review and approval</small>
+                        </li>
+                        <li class="mb-2">
+                            <span class="badge bg-primary">Accountant</span>
+                            <small class="d-block text-muted">Invoice entry, payment processing</small>
+                        </li>
+                        <li>
+                            <span class="badge bg-secondary">Viewer</span>
+                            <small class="d-block text-muted">Read-only access</small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

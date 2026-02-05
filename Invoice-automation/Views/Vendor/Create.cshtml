@@ -1,0 +1,129 @@
+@model InvoiceAutomation.Web.ViewModels.VendorCreateViewModel
+@{
+    ViewData["Title"] = "Add Vendor";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-person-plus me-2"></i>Add Vendor</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index">Vendors</a></li>
+                    <li class="breadcrumb-item active">Add</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Vendor Information</h5>
+                </div>
+                <div class="card-body">
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+                    }
+
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <label asp-for="Name" class="form-label">Vendor Name <span class="text-danger">*</span></label>
+                                <input asp-for="Name" class="form-control" placeholder="Company or individual name" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Ntn" class="form-label">NTN (Tax Number)</label>
+                                <input asp-for="Ntn" class="form-control" placeholder="1234567-8" />
+                                <span asp-validation-for="Ntn" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="ContactPerson" class="form-label">Contact Person</label>
+                                <input asp-for="ContactPerson" class="form-control" placeholder="Primary contact name" />
+                                <span asp-validation-for="ContactPerson" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Phone" class="form-label">Phone</label>
+                                <input asp-for="Phone" class="form-control" placeholder="+92 XXX XXXXXXX" />
+                                <span asp-validation-for="Phone" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label">Email</label>
+                            <input asp-for="Email" type="email" class="form-control" placeholder="vendor@example.com" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Address" class="form-label">Address</label>
+                            <textarea asp-for="Address" class="form-control" rows="2" placeholder="Street address, city, country"></textarea>
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <h6 class="mb-3"><i class="bi bi-bank me-2"></i>Bank Details (Optional)</h6>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="BankName" class="form-label">Bank Name</label>
+                                <input asp-for="BankName" class="form-control" placeholder="Bank name" />
+                                <span asp-validation-for="BankName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="BankAccountNumber" class="form-label">Account Number</label>
+                                <input asp-for="BankAccountNumber" class="form-control" placeholder="Account number" />
+                                <span asp-validation-for="BankAccountNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="BankIban" class="form-label">IBAN</label>
+                            <input asp-for="BankIban" class="form-control" placeholder="PK00XXXX0000000000000000" />
+                            <span asp-validation-for="BankIban" class="text-danger"></span>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <h6 class="mb-3"><i class="bi bi-link-45deg me-2"></i>Accounting Integration (Optional)</h6>
+
+                        <div class="mb-3">
+                            <label asp-for="ExternalAccountId" class="form-label">External Account ID</label>
+                            <input asp-for="ExternalAccountId" class="form-control" placeholder="ID from external accounting system" />
+                            <small class="text-muted">Link this vendor to an account in your external accounting system</small>
+                            <span asp-validation-for="ExternalAccountId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Notes" class="form-label">Notes</label>
+                            <textarea asp-for="Notes" class="form-control" rows="2" placeholder="Additional notes about this vendor"></textarea>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-lg me-2"></i>Create Vendor
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-lg me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

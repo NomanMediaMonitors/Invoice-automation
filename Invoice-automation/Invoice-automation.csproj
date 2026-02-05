@@ -4,7 +4,39 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>Invoice_automation</RootNamespace>
+    <RootNamespace>InvoiceAutomation.Web</RootNamespace>
+    <AssemblyName>InvoiceAutomation.Web</AssemblyName>
   </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Entity Framework Core for MySQL -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
+
+    <!-- ASP.NET Core Identity -->
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.2" />
+
+    <!-- OCR - Tesseract -->
+    <PackageReference Include="Tesseract" Version="5.2.0" />
+
+    <!-- Image Processing -->
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.2" />
+
+    <!-- PDF Processing -->
+    <PackageReference Include="PdfPig" Version="0.1.8" />
+
+    <!-- JSON Handling -->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+
+    <!-- HTTP Client for External APIs -->
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+
+    <!-- Data Protection for Token Encryption -->
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="8.0.2" />
+  </ItemGroup>
 
 </Project>

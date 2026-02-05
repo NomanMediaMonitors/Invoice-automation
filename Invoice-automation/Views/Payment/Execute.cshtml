@@ -1,0 +1,131 @@
+@model InvoiceAutomation.Web.ViewModels.PaymentExecuteViewModel
+@{
+    ViewData["Title"] = "Execute Payment";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-play-circle me-2"></i>Execute Payment</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index">Payments</a></li>
+                    <li class="breadcrumb-item active">Execute</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Confirm Payment Execution</h5>
+                </div>
+                <div class="card-body">
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+                    }
+
+                    <div class="alert alert-warning">
+                        <strong>Warning:</strong> This action will mark the payment as completed and create a journal entry in your accounting system. This action cannot be undone.
+                    </div>
+
+                    <!-- Payment Details -->
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <h6 class="card-title">Payment Details</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <dl class="row mb-0">
+                                        <dt class="col-sm-5">Invoice #:</dt>
+                                        <dd class="col-sm-7">@Model.InvoiceNumber</dd>
+
+                                        <dt class="col-sm-5">Vendor:</dt>
+                                        <dd class="col-sm-7">@Model.VendorName</dd>
+
+                                        <dt class="col-sm-5">Payment Method:</dt>
+                                        <dd class="col-sm-7">@Model.PaymentMethod</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-6">
+                                    <dl class="row mb-0">
+                                        <dt class="col-sm-5">Scheduled Date:</dt>
+                                        <dd class="col-sm-7">@Model.ScheduledDate?.ToString("dd MMM yyyy")</dd>
+
+                                        <dt class="col-sm-5">Bank Account:</dt>
+                                        <dd class="col-sm-7">@Model.BankAccountName</dd>
+
+                                        <dt class="col-sm-5">Amount:</dt>
+                                        <dd class="col-sm-7 h5 text-primary">PKR @Model.Amount.ToString("N2")</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Journal Entry Preview -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h6 class="mb-0"><i class="bi bi-journal-text me-2"></i>Journal Entry to be Created</h6>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-sm mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Account</th>
+                                        <th class="text-end">Debit</th>
+                                        <th class="text-end">Credit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.JournalEntries != null)
+                                    {
+                                        @foreach (var entry in Model.JournalEntries)
+                                        {
+                                            <tr>
+                                                <td>@entry.AccountName</td>
+                                                <td class="text-end">@(entry.DebitAmount > 0 ? entry.DebitAmount.ToString("N2") : "-")</td>
+                                                <td class="text-end">@(entry.CreditAmount > 0 ? entry.CreditAmount.ToString("N2") : "-")</td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <form asp-action="Execute" method="post">
+                        <input type="hidden" asp-for="PaymentId" />
+
+                        <div class="mb-3">
+                            <label asp-for="ActualPaymentDate" class="form-label">Actual Payment Date</label>
+                            <input asp-for="ActualPaymentDate" type="date" class="form-control" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                            <span asp-validation-for="ActualPaymentDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="TransactionReference" class="form-label">Transaction Reference (Optional)</label>
+                            <input asp-for="TransactionReference" class="form-control" placeholder="Bank transaction reference or check number" />
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-lg me-2"></i>Confirm & Execute Payment
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-lg me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,160 @@
+@model InvoiceAutomation.Web.ViewModels.CompanyCreateViewModel
+@{
+    ViewData["Title"] = "Add Company";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-building-add me-2"></i>Add Company</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index">Companies</a></li>
+                    <li class="breadcrumb-item active">Add</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Company Information</h5>
+                </div>
+                <div class="card-body">
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+                    }
+
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <label asp-for="Name" class="form-label">Company Name <span class="text-danger">*</span></label>
+                                <input asp-for="Name" class="form-control" placeholder="Enter company name" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Ntn" class="form-label">NTN (Tax Number) <span class="text-danger">*</span></label>
+                                <input asp-for="Ntn" class="form-control" placeholder="1234567-8" />
+                                <span asp-validation-for="Ntn" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Address" class="form-label">Address</label>
+                            <textarea asp-for="Address" class="form-control" rows="2" placeholder="Company address"></textarea>
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <h6 class="mb-3"><i class="bi bi-link-45deg me-2"></i>Accounting Integration</h6>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="AccountingProvider" class="form-label">Accounting Provider <span class="text-danger">*</span></label>
+                                <select asp-for="AccountingProvider" class="form-select" id="accountingProvider">
+                                    @foreach (var provider in Enum.GetValues<AccountingProvider>())
+                                    {
+                                        <option value="@provider">@provider</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="AccountingProvider" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div id="integrationFields" class="d-none">
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle me-2"></i>
+                                Enter your accounting system API credentials. These will be encrypted and stored securely.
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label asp-for="ApiBaseUrl" class="form-label">API Base URL</label>
+                                    <input asp-for="ApiBaseUrl" class="form-control" placeholder="https://api.example.com" />
+                                    <span asp-validation-for="ApiBaseUrl" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="ClientId" class="form-label">Client ID</label>
+                                    <input asp-for="ClientId" class="form-control" placeholder="OAuth Client ID" />
+                                    <span asp-validation-for="ClientId" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label asp-for="ClientSecret" class="form-label">Client Secret</label>
+                                    <input asp-for="ClientSecret" type="password" class="form-control" placeholder="OAuth Client Secret" />
+                                    <span asp-validation-for="ClientSecret" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="RealmId" class="form-label">Realm ID / Company ID</label>
+                                    <input asp-for="RealmId" class="form-control" placeholder="External company identifier" />
+                                    <span asp-validation-for="RealmId" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <h6 class="mb-3"><i class="bi bi-sliders me-2"></i>Settings</h6>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="ManagerApprovalThreshold" class="form-label">Manager Approval Threshold (PKR)</label>
+                                <input asp-for="ManagerApprovalThreshold" type="number" class="form-control" placeholder="50000" />
+                                <small class="text-muted">Invoices above this amount require admin approval</small>
+                                <span asp-validation-for="ManagerApprovalThreshold" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="AdminApprovalThreshold" class="form-label">Admin Approval Threshold (PKR)</label>
+                                <input asp-for="AdminApprovalThreshold" type="number" class="form-control" placeholder="200000" />
+                                <small class="text-muted">Invoices above this amount require super admin approval</small>
+                                <span asp-validation-for="AdminApprovalThreshold" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input asp-for="IsActive" class="form-check-input" checked />
+                                <label asp-for="IsActive" class="form-check-label">Active</label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-lg me-2"></i>Create Company
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-lg me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        document.getElementById('accountingProvider').addEventListener('change', function() {
+            const integrationFields = document.getElementById('integrationFields');
+            if (this.value !== 'None' && this.value !== 'Mock') {
+                integrationFields.classList.remove('d-none');
+            } else {
+                integrationFields.classList.add('d-none');
+            }
+        });
+
+        // Trigger on load
+        document.getElementById('accountingProvider').dispatchEvent(new Event('change'));
+    </script>
+}

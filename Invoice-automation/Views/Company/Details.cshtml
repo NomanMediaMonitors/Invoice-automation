@@ -1,0 +1,266 @@
+@model InvoiceAutomation.Web.ViewModels.CompanyDetailsViewModel
+@{
+    ViewData["Title"] = "Company Details";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2><i class="bi bi-building me-2"></i>@Model.Name</h2>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a asp-action="Index">Companies</a></li>
+                            <li class="breadcrumb-item active">@Model.Name</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div>
+                    @if (Model.IsActive)
+                    {
+                        <span class="badge bg-success fs-6 me-2">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary fs-6 me-2">Inactive</span>
+                    }
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                        <i class="bi bi-pencil me-2"></i>Edit
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4">
+            <!-- Company Info -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Company Information</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Name:</dt>
+                        <dd class="col-sm-8">@Model.Name</dd>
+
+                        <dt class="col-sm-4">NTN:</dt>
+                        <dd class="col-sm-8"><code>@Model.Ntn</code></dd>
+
+                        <dt class="col-sm-4">Address:</dt>
+                        <dd class="col-sm-8">@(Model.Address ?? "-")</dd>
+
+                        <dt class="col-sm-4">Created:</dt>
+                        <dd class="col-sm-8">@Model.CreatedAt.ToString("dd MMM yyyy")</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Integration Info -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-link-45deg me-2"></i>Accounting Integration</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Provider:</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge bg-info">@Model.AccountingProvider</span>
+                        </dd>
+
+                        @if (Model.AccountingProvider != AccountingProvider.None && Model.AccountingProvider != AccountingProvider.Mock)
+                        {
+                            <dt class="col-sm-4">API URL:</dt>
+                            <dd class="col-sm-8">
+                                <small>@(Model.ApiBaseUrl ?? "Not configured")</small>
+                            </dd>
+
+                            <dt class="col-sm-4">Status:</dt>
+                            <dd class="col-sm-8">
+                                @if (Model.IsApiConfigured)
+                                {
+                                    <span class="badge bg-success">Configured</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning">Not Configured</span>
+                                }
+                            </dd>
+                        }
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Approval Settings -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-sliders me-2"></i>Approval Settings</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-6">Manager Threshold:</dt>
+                        <dd class="col-sm-6">PKR @Model.ManagerApprovalThreshold.ToString("N0")</dd>
+
+                        <dt class="col-sm-6">Admin Threshold:</dt>
+                        <dd class="col-sm-6">PKR @Model.AdminApprovalThreshold.ToString("N0")</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <!-- Statistics -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="h3 text-primary">@Model.UserCount</div>
+                            <small class="text-muted">Users</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="h3 text-info">@Model.VendorCount</div>
+                            <small class="text-muted">Vendors</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="h3 text-success">@Model.InvoiceCount</div>
+                            <small class="text-muted">Invoices</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="h5 text-warning">PKR @Model.TotalInvoiceAmount.ToString("N0")</div>
+                            <small class="text-muted">Total Amount</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users List -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-people me-2"></i>Company Users</h5>
+                    <a asp-action="Users" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-gear me-1"></i>Manage Users
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if (Model.Users != null && Model.Users.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var user in Model.Users.Take(5))
+                                    {
+                                        <tr>
+                                            <td>@user.FullName</td>
+                                            <td>@user.Email</td>
+                                            <td>
+                                                @{
+                                                    var roleClass = user.Role switch
+                                                    {
+                                                        UserRole.SuperAdmin => "danger",
+                                                        UserRole.Admin => "warning",
+                                                        UserRole.Manager => "info",
+                                                        UserRole.Approver => "success",
+                                                        UserRole.Accountant => "primary",
+                                                        _ => "secondary"
+                                                    };
+                                                }
+                                                <span class="badge bg-@roleClass">@user.Role</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        @if (Model.Users.Count() > 5)
+                        {
+                            <a asp-action="Users" asp-route-id="@Model.Id" class="btn btn-link btn-sm">
+                                View all @Model.Users.Count() users
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">No users assigned to this company</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Recent Invoices -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-receipt me-2"></i>Recent Invoices</h5>
+                    <a asp-controller="Invoice" asp-action="Index" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentInvoices != null && Model.RecentInvoices.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Invoice #</th>
+                                        <th>Vendor</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var invoice in Model.RecentInvoices)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <a asp-controller="Invoice" asp-action="Edit" asp-route-id="@invoice.Id">
+                                                    @invoice.InvoiceNumber
+                                                </a>
+                                            </td>
+                                            <td>@invoice.VendorName</td>
+                                            <td>PKR @invoice.TotalAmount.ToString("N0")</td>
+                                            <td>
+                                                @{
+                                                    var statusClass = invoice.Status switch
+                                                    {
+                                                        InvoiceStatus.Draft => "secondary",
+                                                        InvoiceStatus.PendingManagerReview => "warning",
+                                                        InvoiceStatus.PendingAdminApproval => "info",
+                                                        InvoiceStatus.Approved => "success",
+                                                        _ => "secondary"
+                                                    };
+                                                }
+                                                <span class="badge bg-@statusClass">@invoice.Status</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">No invoices yet</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
