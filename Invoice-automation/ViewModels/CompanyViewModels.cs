@@ -188,3 +188,13 @@ public class AccountingConnectionViewModel
     public string? EndraajOAuthUrl { get; set; }
     public string? QuickBooksOAuthUrl { get; set; }
 }
+
+/// <summary>
+/// Alias for CompanyFormViewModel for Create view
+/// </summary>
+public class CompanyCreateViewModel : CompanyFormViewModel { }
+
+/// <summary>
+/// Alias for CompanyFormViewModel for Edit view
+/// </summary>
+public class CompanyEditViewModel : CompanyFormViewModel { }

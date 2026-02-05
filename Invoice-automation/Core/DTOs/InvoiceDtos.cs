@@ -1,4 +1,5 @@
 using InvoiceAutomation.Web.Core.Enums;
+using CoreMatchType = InvoiceAutomation.Web.Core.Enums.MatchType;
 
 namespace InvoiceAutomation.Web.Core.DTOs;
 
@@ -51,7 +52,7 @@ public class InvoiceItemDto
     public decimal TaxAmount { get; set; }
     public decimal Amount { get; set; }
     public int LineNumber { get; set; }
-    public MatchType MatchType { get; set; } = MatchType.Manual;
+    public CoreMatchType MatchType { get; set; } = CoreMatchType.Manual;
 }
 
 /// <summary>

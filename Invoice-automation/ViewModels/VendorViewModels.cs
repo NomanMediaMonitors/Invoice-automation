@@ -126,3 +126,13 @@ public class VendorDetailsViewModel
     // Recent invoices
     public List<InvoiceListItemViewModel> RecentInvoices { get; set; } = new();
 }
+
+/// <summary>
+/// Alias for VendorFormViewModel for Create view
+/// </summary>
+public class VendorCreateViewModel : VendorFormViewModel { }
+
+/// <summary>
+/// Alias for VendorFormViewModel for Edit view
+/// </summary>
+public class VendorEditViewModel : VendorFormViewModel { }
