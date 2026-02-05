@@ -167,3 +167,8 @@ public class PaymentDetailsViewModel
     /// </summary>
     public List<JournalLineDto>? JournalEntries => JournalEntry?.Lines;
 }
+
+/// <summary>
+/// Payment schedule view model (alias for PaymentExecuteViewModel for Schedule view)
+/// </summary>
+public class PaymentScheduleViewModel : PaymentExecuteViewModel { }
