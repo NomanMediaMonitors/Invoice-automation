@@ -3,6 +3,7 @@ using InvoiceAutomation.Web.Core.DTOs;
 using InvoiceAutomation.Web.Core.Entities;
 using InvoiceAutomation.Web.Core.Enums;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using CoreMatchType = InvoiceAutomation.Web.Core.Enums.MatchType;
 
 namespace InvoiceAutomation.Web.ViewModels;
 
@@ -302,5 +303,5 @@ public class InvoiceItemReviewModel
     public decimal Amount { get; set; }
     public string? ExpenseAccountName { get; set; }
     public string? ExpenseAccountCode { get; set; }
-    public MatchType MatchType { get; set; }
+    public CoreMatchType MatchType { get; set; }
 }
