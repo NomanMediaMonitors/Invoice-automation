@@ -38,6 +38,9 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, Guid>
         builder.Entity<Microsoft.AspNetCore.Identity.IdentityUserLogin<Guid>>().ToTable("user_logins");
         builder.Entity<Microsoft.AspNetCore.Identity.IdentityUserToken<Guid>>().ToTable("user_tokens");
         builder.Entity<Microsoft.AspNetCore.Identity.IdentityRoleClaim<Guid>>().ToTable("role_claims");
+
+        // Apply snake_case naming convention to all columns
+        builder.ApplySnakeCaseNamingConvention();
     }
 
     public override int SaveChanges()
