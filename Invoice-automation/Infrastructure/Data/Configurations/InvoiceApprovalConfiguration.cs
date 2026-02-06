@@ -1,4 +1,5 @@
 using InvoiceAutomation.Web.Core.Entities;
+using InvoiceAutomation.Web.Core.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -19,7 +20,7 @@ public class InvoiceApprovalConfiguration : IEntityTypeConfiguration<InvoiceAppr
         builder.Property(ia => ia.Status)
             .HasConversion<string>()
             .HasMaxLength(20)
-            .HasDefaultValue("Pending");
+            .HasDefaultValue(ApprovalStatus.Pending);
 
         builder.Property(ia => ia.Comments)
             .HasMaxLength(2000);
