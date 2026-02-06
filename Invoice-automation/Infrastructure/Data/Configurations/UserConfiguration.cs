@@ -9,6 +9,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
     public void Configure(EntityTypeBuilder<User> builder)
     {
         builder.Property(u => u.FullName)
+            .HasColumnName("full_name")
             .HasMaxLength(200)
             .IsRequired();
 
@@ -16,10 +17,12 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasMaxLength(20);
 
         builder.Property(u => u.IsActive)
+            .HasColumnName("is_active")
             .HasDefaultValue(true);
 
         builder.Property(u => u.CreatedAt)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
+            .HasColumnName("created_at")
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
         // Indexes
         builder.HasIndex(u => u.Email)
@@ -37,6 +40,7 @@ public class RoleConfiguration : IEntityTypeConfiguration<Role>
             .HasMaxLength(500);
 
         builder.Property(r => r.CreatedAt)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
+            .HasColumnName("created_at")
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
     }
 }
