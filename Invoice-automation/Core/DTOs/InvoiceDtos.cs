@@ -79,7 +79,7 @@ public class InvoiceStatisticsDto
 /// <summary>
 /// Paged result wrapper
 /// </summary>
-public class PagedResult<T>
+public class PagedResult<T> : IEnumerable<T>
 {
     public List<T> Items { get; set; } = new();
     public int TotalCount { get; set; }
@@ -88,4 +88,12 @@ public class PagedResult<T>
     public int TotalPages => (int)Math.Ceiling(TotalCount / (double)PageSize);
     public bool HasPrevious => Page > 1;
     public bool HasNext => Page < TotalPages;
+
+    // IEnumerable implementation for foreach support
+    public IEnumerator<T> GetEnumerator() => Items.GetEnumerator();
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+
+    // LINQ helpers for view compatibility
+    public bool Any() => Items.Any();
+    public int Count() => Items.Count;
 }

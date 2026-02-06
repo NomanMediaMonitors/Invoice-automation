@@ -318,7 +318,7 @@
         }
 
         let lineItemIndex = @(Model.Items?.Count ?? 0);
-        const expenseAccounts = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ExpenseAccounts?.Select(a => new { value = a.Value, text = a.Text }) ?? new List<object>()));
+        const expenseAccounts = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ExpenseAccounts != null ? Model.ExpenseAccounts.Select(a => new { value = a.Value, text = a.Text }).ToList() : new List<object>()));
 
         function addLineItem() {
             const tbody = document.getElementById('lineItemsBody');

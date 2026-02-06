@@ -13,9 +13,17 @@ public class VendorListViewModel
     public List<VendorListItemViewModel> Vendors { get; set; } = new();
     public bool ShowInactive { get; set; }
 
+    // Search and filtering
+    public string? SearchTerm { get; set; }
+
     // Count properties for view compatibility
     public int TotalCount => Vendors.Count;
     public int ActiveCount => Vendors.Count(v => v.IsActive);
+
+    // Pagination properties for view compatibility
+    public int CurrentPage { get; set; } = 1;
+    public int TotalPages { get; set; } = 1;
+    public int PageSize { get; set; } = 20;
 }
 
 /// <summary>
@@ -30,10 +38,14 @@ public class VendorListItemViewModel
     public string? Phone { get; set; }
     public string? Address { get; set; }
     public string? City { get; set; }
+    public string? ContactPerson { get; set; }
     public string? DefaultExpenseAccountName { get; set; }
     public int InvoiceCount { get; set; }
     public decimal TotalInvoiceAmount { get; set; }
     public bool IsActive { get; set; }
+
+    // Alias for view compatibility
+    public decimal TotalAmount => TotalInvoiceAmount;
 }
 
 /// <summary>
@@ -87,6 +99,31 @@ public class VendorFormViewModel
 
     [Display(Name = "Active")]
     public bool IsActive { get; set; } = true;
+
+    // Bank details
+    [Display(Name = "Bank Name")]
+    [StringLength(200)]
+    public string? BankName { get; set; }
+
+    [Display(Name = "Bank Account Number")]
+    [StringLength(50)]
+    public string? BankAccountNumber { get; set; }
+
+    [Display(Name = "IBAN")]
+    [StringLength(50)]
+    public string? BankIban { get; set; }
+
+    [Display(Name = "External Account ID")]
+    [StringLength(100)]
+    public string? ExternalAccountId { get; set; }
+
+    [Display(Name = "Notes")]
+    [StringLength(2000)]
+    public string? Notes { get; set; }
+
+    // Timestamps for edit view
+    public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 
     /// <summary>
     /// Expense accounts from accounting system

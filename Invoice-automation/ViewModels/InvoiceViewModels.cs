@@ -143,16 +143,66 @@ public class InvoiceEditViewModel
     public string? VendorNtn { get; set; }
 
     // Aliases for view compatibility - these access Invoice model properties
+    // Read-only aliases for display
     public string ImagePath => InvoiceFileUrl;
-    public string InvoiceNumber => Invoice.InvoiceNumber;
-    public Guid? VendorId => Invoice.VendorId;
-    public DateTime InvoiceDate => Invoice.InvoiceDate;
-    public DateTime? DueDate => Invoice.DueDate;
-    public decimal SubTotal => Invoice.Subtotal;
-    public decimal TaxAmount => Invoice.TaxAmount;
-    public decimal TotalAmount => Invoice.TotalAmount;
-    public string? Notes => Invoice.Notes;
-    public List<InvoiceItemFormModel> Items => Invoice.Items;
+
+    // Read-write aliases for form binding
+    [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Invoice number is required")]
+    [System.ComponentModel.DataAnnotations.StringLength(100)]
+    public string InvoiceNumber
+    {
+        get => Invoice.InvoiceNumber;
+        set => Invoice.InvoiceNumber = value;
+    }
+
+    public Guid? VendorId
+    {
+        get => Invoice.VendorId;
+        set => Invoice.VendorId = value;
+    }
+
+    [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Invoice date is required")]
+    public DateTime InvoiceDate
+    {
+        get => Invoice.InvoiceDate;
+        set => Invoice.InvoiceDate = value;
+    }
+
+    public DateTime? DueDate
+    {
+        get => Invoice.DueDate;
+        set => Invoice.DueDate = value;
+    }
+
+    public decimal SubTotal
+    {
+        get => Invoice.Subtotal;
+        set => Invoice.Subtotal = value;
+    }
+
+    public decimal TaxAmount
+    {
+        get => Invoice.TaxAmount;
+        set => Invoice.TaxAmount = value;
+    }
+
+    public decimal TotalAmount
+    {
+        get => Invoice.TotalAmount;
+        set => Invoice.TotalAmount = value;
+    }
+
+    public string? Notes
+    {
+        get => Invoice.Notes;
+        set => Invoice.Notes = value;
+    }
+
+    public List<InvoiceItemFormModel> Items
+    {
+        get => Invoice.Items;
+        set => Invoice.Items = value;
+    }
 }
 
 /// <summary>
