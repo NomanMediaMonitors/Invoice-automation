@@ -27,10 +27,23 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, Guid>
     {
         base.OnModelCreating(builder);
 
-        // Apply all configurations from the Configurations folder
-        builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+        // Convert all column names to snake_case
+        foreach (var entity in builder.Model.GetEntityTypes())
+        {
+            foreach (var property in entity.GetProperties())
+            {
+                var name = property.Name;
+                var snakeCase = string.Concat(
+                    name.Select((c, i) =>
+                        i > 0 && char.IsUpper(c) ? "_" + c : c.ToString()
+                    )
+                ).ToLower();
 
-        // Rename Identity tables to snake_case
+                property.SetColumnName(snakeCase);
+            }
+        }
+
+        // Identity table names
         builder.Entity<User>().ToTable("users");
         builder.Entity<Role>().ToTable("roles");
         builder.Entity<Microsoft.AspNetCore.Identity.IdentityUserRole<Guid>>().ToTable("user_roles");
@@ -38,6 +51,9 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, Guid>
         builder.Entity<Microsoft.AspNetCore.Identity.IdentityUserLogin<Guid>>().ToTable("user_logins");
         builder.Entity<Microsoft.AspNetCore.Identity.IdentityUserToken<Guid>>().ToTable("user_tokens");
         builder.Entity<Microsoft.AspNetCore.Identity.IdentityRoleClaim<Guid>>().ToTable("role_claims");
+
+        // Apply configurations last
+        builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
     }
 
     public override int SaveChanges()
