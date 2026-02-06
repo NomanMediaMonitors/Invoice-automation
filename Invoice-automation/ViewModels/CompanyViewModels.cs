@@ -24,10 +24,12 @@ public class CompanyListItemViewModel
     public string City { get; set; } = string.Empty;
     public UserRole UserRole { get; set; }
     public bool IsDefault { get; set; }
+    public bool IsActive { get; set; } = true;
     public bool AccountingConnected { get; set; }
     public AccountingProvider AccountingProvider { get; set; }
     public int InvoiceCount { get; set; }
     public int PendingApprovalCount { get; set; }
+    public int UserCount { get; set; }
 }
 
 /// <summary>
@@ -153,15 +155,28 @@ public class CompanyDetailsViewModel
     // Accounting connection
     public bool AccountingConnected { get; set; }
     public AccountingProvider AccountingProvider { get; set; }
+    public string? ApiBaseUrl { get; set; }
+    public bool IsApiConfigured => !string.IsNullOrEmpty(ApiBaseUrl);
+
+    // Approval thresholds
+    public decimal ManagerApprovalThreshold { get; set; }
+    public decimal AdminApprovalThreshold { get; set; }
 
     // Users
     public List<UserCompanyDto> Users { get; set; } = new();
+    public int UserCount => Users.Count;
 
     // Statistics
     public int TotalInvoices { get; set; }
+    public int InvoiceCount => TotalInvoices;
     public int PendingInvoices { get; set; }
     public int TotalVendors { get; set; }
+    public int VendorCount => TotalVendors;
     public decimal TotalAmount { get; set; }
+    public decimal TotalInvoiceAmount => TotalAmount;
+
+    // Recent invoices
+    public List<InvoiceListItemViewModel> RecentInvoices { get; set; } = new();
 
     // Current user's role
     public UserRole CurrentUserRole { get; set; }

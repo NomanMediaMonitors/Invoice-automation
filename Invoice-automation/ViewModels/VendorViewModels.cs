@@ -12,6 +12,10 @@ public class VendorListViewModel
     public string CompanyName { get; set; } = string.Empty;
     public List<VendorListItemViewModel> Vendors { get; set; } = new();
     public bool ShowInactive { get; set; }
+
+    // Count properties for view compatibility
+    public int TotalCount => Vendors.Count;
+    public int ActiveCount => Vendors.Count(v => v.IsActive);
 }
 
 /// <summary>
@@ -24,6 +28,7 @@ public class VendorListItemViewModel
     public string? Ntn { get; set; }
     public string? Email { get; set; }
     public string? Phone { get; set; }
+    public string? Address { get; set; }
     public string? City { get; set; }
     public string? DefaultExpenseAccountName { get; set; }
     public int InvoiceCount { get; set; }
