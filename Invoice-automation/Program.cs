@@ -121,6 +121,11 @@ app.UseStaticFiles();
 var uploadPath = builder.Configuration["FileStorage:UploadPath"]
     ?? Path.Combine(builder.Environment.ContentRootPath, "Uploads");
 
+if (!Path.IsPathRooted(uploadPath))
+{
+    uploadPath = Path.Combine(builder.Environment.ContentRootPath, uploadPath);
+}
+
 if (!Directory.Exists(uploadPath))
 {
     Directory.CreateDirectory(uploadPath);

@@ -1,7 +1,16 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "F:\\Invoice-automation\\Invoice-automation\\",
-  "Documents": [],
+  "WorkspaceRootPath": "F:\\Invoice-automation\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{3AA941C5-9BD4-4EC1-BA77-3BC74DFD0D3F}|Invoice-automation\\Invoice-automation.csproj|f:\\invoice-automation\\invoice-automation\\infrastructure\\data\\configurations\\usercompanyconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3AA941C5-9BD4-4EC1-BA77-3BC74DFD0D3F}|Invoice-automation\\Invoice-automation.csproj|solutionrelative:invoice-automation\\infrastructure\\data\\configurations\\usercompanyconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3AA941C5-9BD4-4EC1-BA77-3BC74DFD0D3F}|Invoice-automation\\Invoice-automation.csproj|f:\\invoice-automation\\invoice-automation\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{3AA941C5-9BD4-4EC1-BA77-3BC74DFD0D3F}|Invoice-automation\\Invoice-automation.csproj|solutionrelative:invoice-automation\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,7 +18,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -22,6 +31,32 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "UserCompanyConfiguration.cs",
+              "DocumentMoniker": "F:\\Invoice-automation\\Invoice-automation\\Infrastructure\\Data\\Configurations\\UserCompanyConfiguration.cs",
+              "RelativeDocumentMoniker": "Invoice-automation\\Infrastructure\\Data\\Configurations\\UserCompanyConfiguration.cs",
+              "ToolTip": "F:\\Invoice-automation\\Invoice-automation\\Infrastructure\\Data\\Configurations\\UserCompanyConfiguration.cs",
+              "RelativeToolTip": "Invoice-automation\\Infrastructure\\Data\\Configurations\\UserCompanyConfiguration.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-06T11:17:53.834Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "F:\\Invoice-automation\\Invoice-automation\\appsettings.json",
+              "RelativeDocumentMoniker": "Invoice-automation\\appsettings.json",
+              "ToolTip": "F:\\Invoice-automation\\Invoice-automation\\appsettings.json",
+              "RelativeToolTip": "Invoice-automation\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-02-06T08:16:42.452Z",
+              "EditorCaption": ""
             }
           ]
         }

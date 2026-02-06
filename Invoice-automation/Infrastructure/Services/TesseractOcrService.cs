@@ -26,7 +26,7 @@ public class TesseractOcrService : IOcrService, IDisposable
         ILogger<TesseractOcrService> logger)
     {
         _logger = logger;
-        _tessdataPath = Path.Combine(environment.ContentRootPath, "App_Data", "tessdata");
+        _tessdataPath = Path.Combine(environment.ContentRootPath, "wwwroot", "App_Data", "tessdata");
         _tempPath = Path.Combine(Path.GetTempPath(), "InvoiceOcr");
 
         // Ensure directories exist
