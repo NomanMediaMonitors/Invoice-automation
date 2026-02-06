@@ -20,6 +20,10 @@ public class InvoiceFilterDto
     public bool SortDescending { get; set; } = true;
     public int Page { get; set; } = 1;
     public int PageSize { get; set; } = 20;
+
+    // Aliases for view compatibility
+    public DateTime? FromDate { get => DateFrom; set => DateFrom = value; }
+    public DateTime? ToDate { get => DateTo; set => DateTo = value; }
 }
 
 /// <summary>

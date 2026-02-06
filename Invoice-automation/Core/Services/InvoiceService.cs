@@ -56,10 +56,16 @@ public class InvoiceService : IInvoiceService
 
         // 3. Try to match vendor - use provided vendorId, or fallback to OCR NTN match
         Guid? matchedVendorId = vendorId;
+        Vendor? vendor = null;
+
         if (!matchedVendorId.HasValue && !string.IsNullOrEmpty(ocrResult?.VendorNtn))
         {
-            var vendor = await _vendorService.FindByNtnAsync(companyId, ocrResult.VendorNtn);
+            vendor = await _vendorService.FindByNtnAsync(companyId, ocrResult.VendorNtn);
             matchedVendorId = vendor?.Id;
+        }
+        else if (matchedVendorId.HasValue)
+        {
+            vendor = await _vendorService.GetByIdAsync(matchedVendorId.Value);
         }
 
         // 4. Create invoice

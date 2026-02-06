@@ -30,7 +30,7 @@ public class DashboardViewModel
     /// <summary>
     /// Invoices pending approval (for managers/admins)
     /// </summary>
-    public List<PendingApprovalItemViewModel> PendingApprovals { get; set; } = new();
+    public List<InvoiceListItemViewModel> PendingApprovals { get; set; } = new();
 
     /// <summary>
     /// Pending payments
@@ -42,6 +42,7 @@ public class DashboardViewModel
     /// </summary>
     public int TotalInvoices { get; set; }
     public int PendingApproval { get; set; }
+    public int PendingApprovalCount { get; set; }
     public int ApprovedInvoices { get; set; }
     public int PendingPayment { get; set; }
 

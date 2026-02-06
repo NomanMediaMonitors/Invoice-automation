@@ -19,6 +19,10 @@ public class InvoiceListViewModel
     public List<SelectListItem> StatusOptions { get; set; } = new();
     public Guid CompanyId { get; set; }
     public string CompanyName { get; set; } = string.Empty;
+
+    // Pagination aliases for view compatibility
+    public int CurrentPage => Invoices.Page;
+    public int TotalPages => Invoices.TotalPages;
 }
 
 /// <summary>
@@ -137,6 +141,18 @@ public class InvoiceEditViewModel
     /// Vendor NTN for display
     /// </summary>
     public string? VendorNtn { get; set; }
+
+    // Aliases for view compatibility - these access Invoice model properties
+    public string ImagePath => InvoiceFileUrl;
+    public string InvoiceNumber => Invoice.InvoiceNumber;
+    public Guid? VendorId => Invoice.VendorId;
+    public DateTime InvoiceDate => Invoice.InvoiceDate;
+    public DateTime? DueDate => Invoice.DueDate;
+    public decimal SubTotal => Invoice.Subtotal;
+    public decimal TaxAmount => Invoice.TaxAmount;
+    public decimal TotalAmount => Invoice.TotalAmount;
+    public string? Notes => Invoice.Notes;
+    public List<InvoiceItemFormModel> Items => Invoice.Items;
 }
 
 /// <summary>
@@ -166,6 +182,15 @@ public class InvoiceFormModel
     [Display(Name = "Subtotal")]
     [Range(0, double.MaxValue)]
     public decimal Subtotal { get; set; }
+
+    /// <summary>
+    /// Alias for Subtotal for view compatibility
+    /// </summary>
+    public decimal SubTotal
+    {
+        get => Subtotal;
+        set => Subtotal = value;
+    }
 
     [Display(Name = "Tax Amount")]
     [Range(0, double.MaxValue)]

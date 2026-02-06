@@ -16,6 +16,12 @@ public class PaymentListViewModel
     public PaymentStatisticsDto Statistics { get; set; } = new();
     public PaymentStatus? FilterStatus { get; set; }
     public List<SelectListItem> StatusOptions { get; set; } = new();
+
+    // Aliases for view compatibility
+    public int PendingCount => Statistics?.PendingCount ?? Payments.Count(p => p.Status == PaymentStatus.Pending);
+    public int ScheduledCount => Statistics?.ScheduledCount ?? Payments.Count(p => p.Status == PaymentStatus.Scheduled);
+    public int CompletedCount => Statistics?.CompletedCount ?? Payments.Count(p => p.Status == PaymentStatus.Completed);
+    public decimal TotalPaidAmount => Statistics?.TotalPaid ?? Payments.Where(p => p.Status == PaymentStatus.Completed).Sum(p => p.Amount);
 }
 
 /// <summary>
@@ -35,6 +41,10 @@ public class PaymentListItemViewModel
     public DateTime? ExecutedAt { get; set; }
     public string? ExecutedByName { get; set; }
     public string? ReferenceNumber { get; set; }
+
+    // Invoice date properties for view compatibility
+    public DateTime InvoiceDate { get; set; }
+    public DateTime? DueDate { get; set; }
 }
 
 /// <summary>
@@ -75,6 +85,16 @@ public class PaymentExecuteViewModel
     /// Preview of journal entry that will be created
     /// </summary>
     public JournalEntryDto? JournalPreview { get; set; }
+
+    // Aliases and additional properties for view compatibility
+    public Guid? PaymentId { get; set; }
+    public decimal Amount { get => InvoiceAmount; set => InvoiceAmount = value; }
+    public DateTime? ScheduledDate { get => Payment.ScheduledDate; set => Payment.ScheduledDate = value; }
+    public DateTime? ActualPaymentDate { get; set; }
+    public string? PaymentMethod { get => Payment.PaymentMethod; set => Payment.PaymentMethod = value; }
+    public string? TransactionReference { get => Payment.ReferenceNumber; set => Payment.ReferenceNumber = value; }
+    public string BankAccountName { get => Payment.PaymentAccountName ?? string.Empty; set => Payment.PaymentAccountName = value; }
+    public List<JournalLineDto>? JournalEntries => JournalPreview?.Lines;
 }
 
 /// <summary>
@@ -171,4 +191,15 @@ public class PaymentDetailsViewModel
 /// <summary>
 /// Payment schedule view model (alias for PaymentExecuteViewModel for Schedule view)
 /// </summary>
-public class PaymentScheduleViewModel : PaymentExecuteViewModel { }
+public class PaymentScheduleViewModel : PaymentExecuteViewModel
+{
+    // Additional properties specific to scheduling
+    public string? BankAccountId { get => Payment.PaymentAccountId; set => Payment.PaymentAccountId = value ?? string.Empty; }
+    public List<SelectListItem> BankAccounts { get => PaymentAccounts; set => PaymentAccounts = value; }
+    public string? Notes { get; set; }
+    public string? ReferenceNumber { get => Payment.ReferenceNumber; set => Payment.ReferenceNumber = value; }
+    public decimal TotalAmount { get => InvoiceAmount; set => InvoiceAmount = value; }
+
+    // New ScheduledDate property that hides the base one
+    public new DateTime? ScheduledDate { get; set; }
+}

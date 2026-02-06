@@ -116,7 +116,7 @@ public class DashboardController : Controller
             var pendingApprovals = await _invoiceService.GetPendingApprovalAsync(
                 companyId, userId, currentUserCompany.Role);
 
-            model.PendingApproval = pendingApprovals.Select(i => new InvoiceListItemViewModel
+            model.PendingApprovals = pendingApprovals.Select(i => new InvoiceListItemViewModel
             {
                 Id = i.Id,
                 InvoiceNumber = i.InvoiceNumber,
@@ -129,6 +129,7 @@ public class DashboardController : Controller
 
             model.PendingApprovalCount = await _approvalService.GetPendingApprovalCountAsync(
                 companyId, userId, currentUserCompany.Role);
+            model.PendingApproval = model.PendingApprovalCount;
         }
 
         // Get pending payments
