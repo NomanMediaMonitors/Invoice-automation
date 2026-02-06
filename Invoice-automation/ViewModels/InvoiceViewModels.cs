@@ -42,6 +42,9 @@ public class InvoiceListItemViewModel
     public DateTime CreatedAt { get; set; }
     public string UploadedByName { get; set; } = string.Empty;
     public CoreMatchType MatchType { get; set; }
+
+    // Alias for view compatibility
+    public Guid InvoiceId => Id;
 }
 
 /// <summary>

@@ -127,7 +127,23 @@ public class ProfileViewModel
     public string LastName { get; set; } = string.Empty;
 
     [Display(Name = "Full Name")]
-    public string FullName => $"{FirstName} {LastName}".Trim();
+    public string FullName
+    {
+        get => $"{FirstName} {LastName}".Trim();
+        set
+        {
+            // Parse full name into first and last name
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                FirstName = string.Empty;
+                LastName = string.Empty;
+                return;
+            }
+            var parts = value.Trim().Split(' ', 2);
+            FirstName = parts[0];
+            LastName = parts.Length > 1 ? parts[1] : string.Empty;
+        }
+    }
 
     [Display(Name = "Email")]
     public string Email { get; set; } = string.Empty;
