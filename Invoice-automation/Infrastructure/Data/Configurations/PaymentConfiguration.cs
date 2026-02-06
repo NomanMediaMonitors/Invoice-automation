@@ -1,4 +1,5 @@
 using InvoiceAutomation.Web.Core.Entities;
+using InvoiceAutomation.Web.Core.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -33,7 +34,7 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.Property(p => p.Status)
             .HasConversion<string>()
             .HasMaxLength(20)
-            .HasDefaultValue("Scheduled");
+            .HasDefaultValue(PaymentStatus.Scheduled);
 
         builder.Property(p => p.ExternalRef)
             .HasMaxLength(100);
