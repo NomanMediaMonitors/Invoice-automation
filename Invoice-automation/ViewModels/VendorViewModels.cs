@@ -121,8 +121,8 @@ public class VendorFormViewModel
     [StringLength(2000)]
     public string? Notes { get; set; }
 
-    // Timestamps for edit view
-    public DateTime CreatedAt { get; set; }
+    // Timestamps for edit view (nullable for create scenario)
+    public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 
     /// <summary>

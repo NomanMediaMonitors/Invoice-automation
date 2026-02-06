@@ -22,11 +22,17 @@ public class PaymentStatisticsDto
 {
     public int TotalPayments { get; set; }
     public int PendingPayments { get; set; }
+    public int ScheduledPayments { get; set; }
     public int CompletedPayments { get; set; }
     public int FailedPayments { get; set; }
     public decimal TotalPaid { get; set; }
     public decimal TotalPending { get; set; }
     public Dictionary<string, decimal> PaymentsByMonth { get; set; } = new();
+
+    // Aliases for view compatibility
+    public int PendingCount => PendingPayments;
+    public int ScheduledCount => ScheduledPayments;
+    public int CompletedCount => CompletedPayments;
 }
 
 /// <summary>
