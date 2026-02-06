@@ -80,7 +80,7 @@ public class CompanyController : Controller
     [HttpGet]
     public IActionResult Create()
     {
-        var model = new CompanyFormViewModel
+        var model = new CompanyCreateViewModel
         {
             FiscalYearStartMonth = 7,
             DefaultCurrency = "PKR",
@@ -93,7 +93,7 @@ public class CompanyController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(CompanyFormViewModel model)
+    public async Task<IActionResult> Create(CompanyCreateViewModel model)
     {
         if (!ModelState.IsValid)
         {
@@ -148,7 +148,7 @@ public class CompanyController : Controller
             return NotFound();
         }
 
-        var model = new CompanyFormViewModel
+        var model = new CompanyEditViewModel
         {
             Id = company.Id,
             Name = company.Name,
@@ -173,7 +173,7 @@ public class CompanyController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(CompanyFormViewModel model)
+    public async Task<IActionResult> Edit(CompanyEditViewModel model)
     {
         if (!ModelState.IsValid)
         {
