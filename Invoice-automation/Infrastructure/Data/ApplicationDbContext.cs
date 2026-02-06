@@ -1,5 +1,4 @@
 using InvoiceAutomation.Web.Core.Entities;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace InvoiceAutomation.Web.Infrastructure.Data;
@@ -7,13 +6,15 @@ namespace InvoiceAutomation.Web.Infrastructure.Data;
 /// <summary>
 /// Main application database context
 /// </summary>
-public class ApplicationDbContext : IdentityDbContext<User, Role, Guid>
+public class ApplicationDbContext : DbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
     }
 
+    public DbSet<User> Users => Set<User>();
+    public DbSet<Role> Roles => Set<Role>();
     public DbSet<Company> Companies => Set<Company>();
     public DbSet<UserCompany> UserCompanies => Set<UserCompany>();
     public DbSet<Vendor> Vendors => Set<Vendor>();
@@ -29,15 +30,6 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, Guid>
 
         // Apply all configurations from the Configurations folder
         builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
-
-        // Rename Identity tables to snake_case
-        builder.Entity<User>().ToTable("users");
-        builder.Entity<Role>().ToTable("roles");
-        builder.Entity<Microsoft.AspNetCore.Identity.IdentityUserRole<Guid>>().ToTable("user_roles");
-        builder.Entity<Microsoft.AspNetCore.Identity.IdentityUserClaim<Guid>>().ToTable("user_claims");
-        builder.Entity<Microsoft.AspNetCore.Identity.IdentityUserLogin<Guid>>().ToTable("user_logins");
-        builder.Entity<Microsoft.AspNetCore.Identity.IdentityUserToken<Guid>>().ToTable("user_tokens");
-        builder.Entity<Microsoft.AspNetCore.Identity.IdentityRoleClaim<Guid>>().ToTable("role_claims");
     }
 
     public override int SaveChanges()
