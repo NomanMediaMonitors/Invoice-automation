@@ -2,6 +2,7 @@ using InvoiceAutomation.Web.Core.Entities;
 using InvoiceAutomation.Web.Core.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using CoreMatchType = InvoiceAutomation.Web.Core.Enums.MatchType;
 
 namespace InvoiceAutomation.Web.Infrastructure.Data.Configurations;
 
@@ -42,7 +43,7 @@ public class InvoiceItemConfiguration : IEntityTypeConfiguration<InvoiceItem>
         builder.Property(ii => ii.MatchType)
             .HasConversion<string>()
             .HasMaxLength(20)
-            .HasDefaultValue(MatchType.Manual);
+            .HasDefaultValue(CoreMatchType.Manual);
 
         builder.Property(ii => ii.MatchConfidence)
             .HasPrecision(5, 2);
