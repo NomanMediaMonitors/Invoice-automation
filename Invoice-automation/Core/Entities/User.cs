@@ -1,27 +1,20 @@
+using Microsoft.AspNetCore.Identity;
+
 namespace InvoiceAutomation.Web.Core.Entities;
 
 /// <summary>
-/// Application user - simple entity matching database schema
+/// Application user extending ASP.NET Core Identity
 /// </summary>
-public class User
+public class User : IdentityUser<Guid>
 {
-    public Guid Id { get; set; }
-
-    public string Email { get; set; } = string.Empty;
-
-    public string PasswordHash { get; set; } = string.Empty;
-
     public string FullName { get; set; } = string.Empty;
 
     public string? Phone { get; set; }
 
     public bool IsActive { get; set; } = true;
 
-    public bool EmailVerified { get; set; } = false;
-
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    // Additional properties not in base schema but used in app
     public DateTime? UpdatedAt { get; set; }
 
     public DateTime? LastLoginAt { get; set; }
@@ -34,14 +27,10 @@ public class User
 }
 
 /// <summary>
-/// Application role - simple entity
+/// Application role
 /// </summary>
-public class Role
+public class Role : IdentityRole<Guid>
 {
-    public Guid Id { get; set; }
-
-    public string Name { get; set; } = string.Empty;
-
     public string? Description { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
